@@ -198,13 +198,12 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 50px;
+  gap: 5px;
   padding: 0 20px;
 }
 .hero-text {
   flex: 1;
   text-align: left;
-  padding-top: 4%;
   animation: fadeInLeft 1s ease-in-out;
 }
 
@@ -312,7 +311,6 @@ html {
 .hero-image {
   flex: 1;
   display: flex;
-  padding-top: 6%;
   justify-content: center;
   align-items: center;
   animation: fadeInRight 1s ease-in-out;
