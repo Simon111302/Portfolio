@@ -121,8 +121,8 @@ html {
 
 .logo {
   color: #fff;
-  padding-top: 5px;
-  font-size: 2.8rem;
+  padding-top: 10px;
+  font-size: clamp(1.5rem, 4vw, 2.8rem); 
   font-weight: bold;
   animation: fadeInDown 1s ease-in-out;
 }
@@ -179,7 +179,7 @@ html {
 
 /* Hero Section */
 .hero {
-  min-height: 100vh;
+  min-height: 110vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -254,9 +254,9 @@ html {
 .hero-text h2 {
   font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem); 
   color: #fff;
-  font-weight: 300;
-  margin-bottom: 15px;
+  font-weight: 200;
   text-align: center;
+  white-space: nowrap;
 }
 
 /* Optional: Remove or keep tablet breakpoint for fine-tuning */
@@ -265,7 +265,12 @@ html {
     font-size: clamp(1.25rem, 5vw, 1.75rem);
   }
 }
-
+@media (max-width: 768px) {
+  .hero-text h2 {
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+    white-space: nowrap; /* Keep text on one line */
+  }
+}
 /* Mobile */
 @media (max-width: 480px) {
   .hero-text h2 {

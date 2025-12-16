@@ -5,7 +5,7 @@ function Hero() {
       <div className="hero-container">
         <div className="hero-text">
           <h1>I'm Simon Belenia</h1>
-          <h2>Softare Developer/Web Developer</h2>
+          <h2>Softare Developer/Software Developer</h2>
           <p>Dedicated student developer committed to continuous learning and professional growth in modern web technologies, specializing in C#, React, and SQL.</p>
           <div className="hero-buttons">
             <a href="#projects" className="btn-primary">View Projects</a>
