@@ -121,7 +121,7 @@ html {
 
 .logo {
   color: #fff;
-  padding-top: 20px;
+  padding-top: 5px;
   font-size: 2.8rem;
   font-weight: bold;
   animation: fadeInDown 1s ease-in-out;
@@ -204,6 +204,7 @@ html {
 .hero-text {
   flex: 1;
   text-align: left;
+  padding-top: 4%;
   animation: fadeInLeft 1s ease-in-out;
 }
 
@@ -311,13 +312,14 @@ html {
 .hero-image {
   flex: 1;
   display: flex;
+  padding-top: 6%;
   justify-content: center;
   align-items: center;
   animation: fadeInRight 1s ease-in-out;
 }
 
 .hero-image img {
-  width: 90%;
+  width: 78%;
   max-width: px;
   height: auto;
   border-radius: 50%;
