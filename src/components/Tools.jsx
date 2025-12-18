@@ -56,8 +56,7 @@ function Tools() {
 
   return (
     <section id="tools" className="tools">
-      <h2>Tools</h2>
-      
+      <h2>Tools/Skills</h2>
       <div className="tools-category">
         <h3 className="category-title">Languages</h3>
         <div className="skills-grid">

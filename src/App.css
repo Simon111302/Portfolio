@@ -28,6 +28,146 @@
     padding: 0.2rem 0.4rem;
   }
 }
+#projects {
+  background-color: #1a1a1a;
+  padding: 80px 20px;
+  min-height: 100vh;
+}
+
+#projects h2 {
+  text-align: center;
+  font-size: 48px;
+  color: #ffffff;
+  margin-bottom: 60px;
+  font-weight: 700;
+}
+
+.projects-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 40px;
+  padding: 0 20px;
+}
+
+.project-card {
+  background-color: #242424;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.project-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.project-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+  background-color: #333;
+}
+
+.project-card h3 {
+  font-size: 24px;
+  color: #ffffff;
+  padding: 20px 20px 10px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.project-card p {
+  color: #b0b0b0;
+  padding: 0 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 20px 20px;
+}
+
+.tech-badge {
+  background-color: #333;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #444;
+}
+
+.project-links {
+  padding: 20px;
+  border-top: 1px solid #333;
+  display: flex;
+  gap: 15px;
+}
+
+.project-links a {
+  flex: 1;
+  text-align: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  color: #000000;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.project-links a:hover {
+  background-color: #e0e0e0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #projects {
+    padding: 60px 20px;
+  }
+
+  #projects h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .project-card img {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  #projects h2 {
+    font-size: 32px;
+  }
+
+  .project-card h3 {
+    font-size: 20px;
+  }
+
+  .project-card p {
+    font-size: 14px;
+  }
+
+  .tech-badge {
+    font-size: 12px;
+    padding: 5px 12px;
+  }
+}
 
 /* Skills Section Animation */
 .skill-card {
@@ -405,7 +545,7 @@ html {
 
 .about h2 {
   color: #fff;  /* White heading */
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   margin-bottom: 30px;
   text-align: center;
 }
