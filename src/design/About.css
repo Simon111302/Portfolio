@@ -1,0 +1,23 @@
+.about {
+    background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);  /* Changed from #f8f9fa to dark */
+    padding: 80px 20px;
+  }
+  
+  .about h2 {
+    color: #fff;  /* White heading */
+    font-size: 3.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .about-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .about-content p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #d1d1d1;  /* Light gray text instead of #555 */
+  }

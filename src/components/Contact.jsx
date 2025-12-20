@@ -15,12 +15,6 @@ function Contact() {
                 Facebook/Simon.Belenia.1
               </a>
             </div>
-            <div className="contact-item">
-              <h3>Phone</h3>
-              <a >
-                09304519250
-              </a>
-            </div>
           </div>
         </div>
       </section>

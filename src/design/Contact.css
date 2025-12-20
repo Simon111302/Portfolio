@@ -1,0 +1,64 @@
+.contact {
+    background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);  /* Changed from #f8f9fa to dark */
+    padding: 80px 20px;
+  }
+  
+  .contact h2 {
+    color: #fff;  /* White heading */
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .contact-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .contact-content > p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    color: #d1d1d1;  /* Changed from #555 to light gray */
+  }
+  
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .contact-item {
+    background: #0a0a0a;  /* Changed from #fff to very dark */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    border: 2px solid #333;  /* Add border */
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .contact-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3);
+    border-color: #8B0000;  /* Red border on hover */
+  }
+  
+  .contact-item h3 {
+    font-size: 1.3rem;
+    color: #ffffff;  /* Changed to white */
+    margin-bottom: 10px;
+  }
+  
+  .contact-item a {
+    color: #d1d1d1;  /* Changed to light gray */
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+  }
+  
+  .contact-item a:hover {
+    color: #8B0000;  /* Red on hover */
+    text-decoration: underline;
+  }
+  
+  
