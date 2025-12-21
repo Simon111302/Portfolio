@@ -234,23 +234,31 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   }
   
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInRight 1s ease-in-out;
+  padding-left: 11%;
+}
+
+.hero-image img {
+  width: 110%;
+  height: auto;
+  border-radius: 50%;
+  border: 5px solid #1b1616;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  object-fit: cover;
+}
+
+/* ADD THIS - Remove padding on smaller screens */
+@media (max-width: 768px) {
   .hero-image {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: fadeInRight 1s ease-in-out;
+    padding-left: 0;
   }
-  
-  .hero-image img {
-    width: 78%;
-    max-width: px;
-    height: auto;
-    border-radius: 50%;
-    border: 5px solid #1b1616;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    object-fit: cover;
-  }
+}
+
   
   /* Scroll Animation Classes */
   .scroll-hidden {

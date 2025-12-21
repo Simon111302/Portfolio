@@ -20,7 +20,6 @@ function Hero() {
             <a href="#contact" className="btn-secondary">Contact Me</a>
           </div>
         </div>
-
         <div className="hero-image">
           <img src={profileImage} alt="Simon Belenia" />
         </div>

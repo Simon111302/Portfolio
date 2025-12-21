@@ -12,6 +12,7 @@
     font-weight: 700;
   }
   
+  
   .projects-grid {
     max-width: 1200px;
     margin: 0 auto;
@@ -20,6 +21,36 @@
     gap: 40px;
     padding: 0 20px;
   }
+  /* fadeInDown animation */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Add animation when class is added */
+.project-card.animate-in {
+  animation: fadeInDown 0.8s ease-in-out forwards;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered delays */
+.project-card:nth-child(1).animate-in { animation-delay: 0.3s; }
+.project-card:nth-child(2).animate-in { animation-delay: 0.5s; }
+.project-card:nth-child(3).animate-in { animation-delay: 0.7s; }
+
+/* H2 title animation */
+#projects h2 {
+  animation: fadeInDown 1s ease-in-out both;
+}
+
   
   .project-card {
     background-color: #242424;

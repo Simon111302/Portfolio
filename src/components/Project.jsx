@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import weatherImg from '../assets/weather.png';
 import ChatBot from '../assets/chatbot.png';
 import movieImg from '../assets/movie.png';
@@ -47,8 +48,28 @@ const projects = [
   }
 ];
 
-
 function Project() {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const cards = entry.target.querySelectorAll('.project-card');
+        
+        if (entry.isIntersecting) {
+          cards.forEach((card, index) => {
+            setTimeout(() => card.classList.add('animate-in'), index * 150);
+          });
+        } else {
+          cards.forEach((card) => card.classList.remove('animate-in'));
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const section = document.querySelector('#projects');
+    if (section) observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section id="projects">
       <h2>My Projects</h2>
