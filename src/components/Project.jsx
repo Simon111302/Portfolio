@@ -8,7 +8,7 @@ const projects = [
     id: 1,
     title: "Weather App",
     description: "Real-time weather application for Philippine cities using OpenWeatherMap API. Features responsive design with dark theme and hourly forecasts.",
-    technologies: ["React", "OpenWeatherMap API", "CSS3", "JavaScript"],
+    technologies: ["React", "OpenWeatherMap API", "JavaScript"],
     image: weatherImg,
     liveLink: "https://simonweath.vercel.app/",
     features: [
@@ -36,7 +36,7 @@ const projects = [
     id: 3,
     title: "Movie Website",
     description: "A dynamic movie browsing application built with React and TypeScript. Discover trending movies, search your favorites, and explore detailed information.",
-    technologies: ["React", "TypeScript", "Movie API", "CSS3"],
+    technologies: ["React", "TypeScript", "Movie API"],
     image: movieImg,
     liveLink: "https://simonmoves.vercel.app/",
     features: [
