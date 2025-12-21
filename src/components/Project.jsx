@@ -1,7 +1,7 @@
 import weatherImg from '../assets/weather.png';
 import ChatBot from '../assets/chatbot.png';
+import movieImg from '../assets/movie.png';
 
-// Project.jsx
 const projects = [
   {
     id: 1,
@@ -30,8 +30,23 @@ const projects = [
       "Clean and modern UI",
       "Fast and responsive"
     ]
+  },
+  {
+    id: 3,
+    title: "Movie Website",
+    description: "A dynamic movie browsing application built with React and TypeScript. Discover trending movies, search your favorites, and explore detailed information.",
+    technologies: ["React", "TypeScript", "Movie API", "CSS3"],
+    image: movieImg,
+    liveLink: "https://simonmoves.vercel.app/",
+    features: [
+      "Browse trending and popular movies",
+      "Search functionality",
+      "Detailed movie information",
+      "Responsive design"
+    ]
   }
 ];
+
 
 function Project() {
   return (
