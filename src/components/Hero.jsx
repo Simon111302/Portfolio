@@ -1,4 +1,4 @@
-import profileImage from '/img/simon2.jpg';
+import profileImage from '../assets/simon2.jpg';
 
 function Hero() {
   return (
@@ -9,7 +9,7 @@ function Hero() {
             <h1>I'm Simon Belenia</h1>
           </div>
 
-          <h2>Softare Developer/Software Developer</h2>
+          <h2>Software Developer/Software Developer</h2>
           <p>
             Dedicated student developer committed to continuous learning and professional
             growth in modern web technologies and full-stack development.

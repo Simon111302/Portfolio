@@ -1,0 +1,135 @@
+.floating-card-3d-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.floating-card-3d-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .floating-card-3d-container {
+    height: 60vh;
+    min-height: 400px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .floating-card-3d-container {
+    height: 70vh;
+  }
+}
+
+/* Prevent scrolling on touch devices */
+.floating-card-3d-container * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.id-card-container {
+  position: relative;
+  display: inline-block;
+  padding-top: 150px;
+}
+
+/* Fabric lanyard strap */
+.lanyard-sling {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px; /* Wider like fabric strap */
+  height: 130px;
+  background: linear-gradient(to right, 
+    #0a0a0a 0%,
+    #1a1a1a 10%,
+    #0f0f0f 50%,
+    #1a1a1a 90%,
+    #0a0a0a 100%
+  );
+  border-left: 1px solid rgba(0, 0, 0, 0.5);
+  border-right: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 
+    inset 2px 0 2px rgba(0, 0, 0, 0.3),
+    inset -2px 0 2px rgba(0, 0, 0, 0.3),
+    0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Top knot */
+.lanyard-sling::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 16px;
+  background: #0a0a0a;
+  border-radius: 50%;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Clip at bottom */
+.lanyard-sling::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 12px;
+  background: linear-gradient(to bottom, #3a3a3a, #2a2a2a);
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Add text branding on lanyard */
+.lanyard-text {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  opacity: 0.8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ID Card */
+.id-card {
+  width: 300px;
+  height: 420px;
+  background: #2a2a2a;
+  border: 3px solid #444;
+  border-radius: 10px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Card hole where sling attaches */
+.card-hole {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: #1a1a1a;
+  border-radius: 50%;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.8),
+    0 1px 2px rgba(255, 255, 255, 0.1);
+  z-index: 10;
+}
