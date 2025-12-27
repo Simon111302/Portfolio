@@ -347,6 +347,10 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .tools {
+    padding: 80px 30px;
+  }
+  
   .tools h2 {
     font-size: 2.5rem;
   }
@@ -354,6 +358,7 @@
   .tools-about-container {
     grid-template-columns: 1fr;
     gap: 30px;
+    padding: 0 30px;
   }
   
   .tools-id {
@@ -397,6 +402,14 @@
 }
 
 @media (max-width: 480px) {
+  .tools {
+    padding: 80px 20px;
+  }
+  
+  .tools-about-container {
+    padding: 0 20px;
+  }
+  
   .scroll-content {
     gap: 20px;
   }

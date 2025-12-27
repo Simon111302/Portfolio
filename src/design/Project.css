@@ -151,7 +151,25 @@
     }
   }
   
+  @media (max-width: 768px) {
+    #projects {
+      padding: 80px 30px;
+    }
+    
+    .projects-grid {
+      padding: 0 30px;
+    }
+  }
+  
   @media (max-width: 480px) {
+    #projects {
+      padding: 80px 20px;
+    }
+    
+    .projects-grid {
+      padding: 0 20px;
+    }
+    
     #projects h2 {
       font-size: 32px;
     }

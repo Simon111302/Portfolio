@@ -3,7 +3,7 @@
   height: 100vh;
   position: relative;
   overflow: hidden;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .floating-card-3d-container canvas {

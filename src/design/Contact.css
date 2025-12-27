@@ -60,6 +60,20 @@
     color: #8B0000;  /* Red on hover */
     text-decoration: underline;
   }
+  
+  /* Responsive padding for small screens */
+  @media (max-width: 768px) {
+    .contact {
+      padding: 80px 30px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .contact {
+      padding: 80px 20px;
+    }
+  }
+  
   /* Initial hidden states */
 .contact h2 {
   opacity: 0;
