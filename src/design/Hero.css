@@ -247,7 +247,8 @@
 }
 
 .hero-image img {
-  width: 110%;
+  width: 100%;
+  max-width: 100%;
   height: auto;
   border-radius: 50%;
   border: 5px solid #1b1616;
@@ -259,6 +260,11 @@
 @media (max-width: 768px) {
   .hero-image {
     padding-left: 0;
+  }
+  
+  .hero-image img {
+    width: 100%;
+    max-width: 100%;
   }
 }
 

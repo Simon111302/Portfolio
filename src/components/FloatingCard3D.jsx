@@ -380,7 +380,8 @@ function SwingingIDCard({ profileImagePath }) {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
-      window.addEventListener('touchmove', handleMouseMove, { passive: false });
+      // Use passive: true to allow scrolling
+      window.addEventListener('touchmove', handleMouseMove, { passive: true });
       window.addEventListener('touchend', handleMouseUp);
     }
 
@@ -393,7 +394,10 @@ function SwingingIDCard({ profileImagePath }) {
   }, [isDragging, stretchPos]);
 
   const handlePointerDown = (e) => {
-    e.stopPropagation();
+    // Only prevent default for mouse events, allow touch events to bubble for scrolling
+    if (e.type === 'mousedown') {
+      e.stopPropagation();
+    }
     setIsDragging(true);
     setVelocity({ x: 0, z: 0 });
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -410,6 +414,13 @@ function SwingingIDCard({ profileImagePath }) {
     
     const deltaX = clientX - lastMouse.x;
     const deltaY = clientY - lastMouse.y;
+    
+    // If vertical movement is much larger than horizontal, allow page scroll
+    if (e.touches && Math.abs(deltaY) > Math.abs(deltaX) * 1.5 && Math.abs(deltaY) > 10) {
+      setIsDragging(false);
+      gl.domElement.style.cursor = 'default';
+      return;
+    }
     
     const sensitivity = isMobile ? 0.007 : 0.005;
     const newStretchX = stretchPos.x + deltaX * sensitivity;
@@ -516,7 +527,7 @@ function FloatingCard3D() {
         camera={{ position: [0, 0, 8], fov: 45 }} // Adjusted camera for bigger card
         shadows
         gl={{ antialias: true, alpha: true }}
-        style={{ touchAction: 'none' }}
+        style={{ touchAction: 'pan-y' }}
       >
         <Suspense fallback={null}>
           <ambientLight intensity={0.7} />

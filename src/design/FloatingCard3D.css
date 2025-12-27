@@ -4,12 +4,16 @@
   position: relative;
   overflow: hidden;
   touch-action: pan-y;
+  /* Allow page scrolling to work */
+  overscroll-behavior: none;
 }
 
 .floating-card-3d-container canvas {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  /* Allow scrolling when not directly interacting */
+  touch-action: pan-y;
 }
 
 /* Mobile optimizations */
