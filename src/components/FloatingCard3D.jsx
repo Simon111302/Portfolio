@@ -1,14 +1,24 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, useTexture } from '@react-three/drei';
-import { Suspense, useRef, useState, useEffect } from 'react';
+import { 
+  Physics, 
+  RigidBody, 
+  CuboidCollider, 
+  BallCollider,
+  useSphericalJoint, 
+  useRopeJoint 
+} from '@react-three/rapier';
+import { Suspense, useRef, useState } from 'react';
 import * as THREE from 'three';
-import profileImage from '../assets/simon2.jpg';  
+import profileImage from '../assets/simon2.jpg';
 import '../design/FloatingCard3D.css';
+
+
 
 // Profile Image
 function ProfileImage({ imagePath }) {
   const profileImageTexture = useTexture(imagePath);
-  profileImageTexture.encoding = THREE.sRGBEncoding;
+  profileImageTexture.colorSpace = THREE.SRGBColorSpace;
   
   return (
     <mesh position={[0, 0, 0.026]}>
@@ -21,460 +31,343 @@ function ProfileImage({ imagePath }) {
   );
 }
 
-// Realistic Dynamic Lanyard Sling - WIDER VERSION
-function RealisticLanyard({ angle, stretchPos = { x: 0, z: 0 }, scale = 1 }) {
-  const lanyardRef = useRef();
-  const segments = 30;
-  
-  const segmentPositions = useRef(
-    Array.from({ length: segments + 1 }, (_, i) => {
-      const t = i / segments;
-      return { x: 0, y: -1.4 * t * scale, z: 0 };
-    })
-  );
-  
-  const prevPositions = useRef(
-    Array.from({ length: segments + 1 }, (_, i) => {
-      const t = i / segments;
-      return { x: 0, y: -1.4 * t * scale, z: 0 };
-    })
-  );
-  
-  useFrame((state, delta) => {
-    if (!lanyardRef.current) return;
-    
-    const dt = Math.min(delta, 0.016);
-    const constraintIterations = 15;
-    
-    const cardCenterY = -3 * scale;
-    const cardHoleOffsetY = 1.6 * scale;
-    
-    const cardHoleY = cardCenterY + cardHoleOffsetY;
-    const cardHoleX = stretchPos.x * scale;
-    const cardHoleZ = stretchPos.z * scale;
-    
-    const pivotPos = new THREE.Vector3(0, 0, 0);
-    const cardHolePos = new THREE.Vector3(cardHoleX, cardHoleY, cardHoleZ);
-    const totalLength = pivotPos.distanceTo(cardHolePos);
-    const segmentLength = totalLength / segments;
-    
-    segmentPositions.current[segments].x = cardHoleX;
-    segmentPositions.current[segments].y = cardHoleY;
-    segmentPositions.current[segments].z = cardHoleZ;
-    prevPositions.current[segments].x = cardHoleX;
-    prevPositions.current[segments].y = cardHoleY;
-    prevPositions.current[segments].z = cardHoleZ;
-    
-    const damping = 0.998;
-    const gravity = 4.5;
-    const windForce = Math.sin(state.clock.elapsedTime * 1.2) * 0.015;
-    
-    for (let i = 1; i < segments; i++) {
-      const pos = segmentPositions.current[i];
-      const prevPos = prevPositions.current[i];
-      
-      const tempX = pos.x;
-      const tempY = pos.y;
-      const tempZ = pos.z;
-      
-      const velocityX = (pos.x - prevPos.x) * damping;
-      const velocityY = (pos.y - prevPos.y) * damping;
-      const velocityZ = (pos.z - prevPos.z) * damping;
-      
-      const t = i / segments;
-      const windEffect = windForce * Math.sin(t * Math.PI) * scale;
-      
-      pos.x += velocityX + windEffect * dt * 60;
-      pos.y += velocityY - gravity * dt * dt * scale;
-      pos.z += velocityZ;
-      
-      prevPos.x = tempX;
-      prevPos.y = tempY;
-      prevPos.z = tempZ;
-    }
-    
-    for (let iteration = 0; iteration < constraintIterations; iteration++) {
-      segmentPositions.current[0].x = 0;
-      segmentPositions.current[0].y = 0;
-      segmentPositions.current[0].z = 0;
-      
-      segmentPositions.current[segments].x = cardHoleX;
-      segmentPositions.current[segments].y = cardHoleY;
-      segmentPositions.current[segments].z = cardHoleZ;
-      
-      for (let i = 0; i < segments; i++) {
-        const p1 = segmentPositions.current[i];
-        const p2 = segmentPositions.current[i + 1];
-        
-        const dx = p2.x - p1.x;
-        const dy = p2.y - p1.y;
-        const dz = p2.z - p1.z;
-        const currentDistance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        
-        if (currentDistance > 0.0001) {
-          const difference = (currentDistance - segmentLength) / currentDistance;
-          const offsetX = dx * difference * 0.5;
-          const offsetY = dy * difference * 0.5;
-          const offsetZ = dz * difference * 0.5;
-          
-          if (i !== 0) {
-            p1.x += offsetX;
-            p1.y += offsetY;
-            p1.z += offsetZ;
-          }
-          
-          if (i !== segments - 1) {
-            p2.x -= offsetX;
-            p2.y -= offsetY;
-            p2.z -= offsetZ;
-          }
-        }
-      }
-    }
-    
-    // Build wide flat strap geometry
-    const positions = [];
-    for (let i = 0; i <= segments; i++) {
-      const pos = segmentPositions.current[i];
-      positions.push(pos.x, pos.y, pos.z);
-    }
-    
-    // WIDER STRAP - like real lanyard fabric
-    const width = 0.35 * scale; // Much wider - real lanyard width
-    const thickness = 0.015 * scale; // Thin like fabric strap
-    
-    if (!lanyardRef.current.geometry) {
-      lanyardRef.current.geometry = new THREE.BufferGeometry();
-    }
-    
-    const geometry = lanyardRef.current.geometry;
-    const vertices = [];
-    const indices = [];
-    const normals = [];
-    
-    for (let i = 0; i <= segments; i++) {
-      const idx = i * 3;
-      const x = positions[idx];
-      const y = positions[idx + 1];
-      const z = positions[idx + 2];
-      
-      // Calculate direction for proper strap orientation
-      let dirX = 0, dirY = -1, dirZ = 0;
-      if (i < segments) {
-        const nextIdx = (i + 1) * 3;
-        dirX = positions[nextIdx] - x;
-        dirY = positions[nextIdx + 1] - y;
-        dirZ = positions[nextIdx + 2] - z;
-        const len = Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
-        if (len > 0.001) {
-          dirX /= len;
-          dirY /= len;
-          dirZ /= len;
-        }
-      }
-      
-      // Create wide flat strap (front, back, and edges)
-      // Front face vertices
-      vertices.push(
-        x - width / 2, y, z + thickness / 2,
-        x + width / 2, y, z + thickness / 2
-      );
-      
-      // Back face vertices
-      vertices.push(
-        x - width / 2, y, z - thickness / 2,
-        x + width / 2, y, z - thickness / 2
-      );
-      
-      // Left edge vertices
-      vertices.push(
-        x - width / 2, y, z + thickness / 2,
-        x - width / 2, y, z - thickness / 2
-      );
-      
-      // Right edge vertices
-      vertices.push(
-        x + width / 2, y, z + thickness / 2,
-        x + width / 2, y, z - thickness / 2
-      );
-      
-      if (i < segments) {
-        const base = i * 8;
-        
-        // Front face
-        indices.push(base, base + 8, base + 1);
-        indices.push(base + 1, base + 8, base + 9);
-        
-        // Back face
-        indices.push(base + 2, base + 3, base + 10);
-        indices.push(base + 3, base + 11, base + 10);
-        
-        // Left edge
-        indices.push(base + 4, base + 12, base + 5);
-        indices.push(base + 5, base + 12, base + 13);
-        
-        // Right edge
-        indices.push(base + 6, base + 7, base + 14);
-        indices.push(base + 7, base + 15, base + 14);
-      }
-    }
-    
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.setIndex(indices);
-    geometry.computeVertexNormals();
-  });
-  
-  const cardCenterY = -3 * scale;
-  const cardHoleOffsetY = 1.6 * scale;
-  const cardHoleY = cardCenterY + cardHoleOffsetY;
-  const cardHoleX = stretchPos.x * scale;
-  const cardHoleZ = stretchPos.z * scale;
-  
+
+
+// Lobster Clasp
+function LobsterClaspConnector({ position, lanyardEndPoint }) {
   return (
-    <group>
-      {/* Wide fabric strap */}
-      <mesh ref={lanyardRef} castShadow receiveShadow>
-        <bufferGeometry />
+    <group position={position}>
+      <mesh castShadow rotation={[0, 0, 0]}>
+        <capsuleGeometry args={[0.04, 0.15, 8, 16]} />
         <meshStandardMaterial 
-          color="#1a1a1a"
-          roughness={0.85}
-          metalness={0.05}
-          side={THREE.DoubleSide}
+          color="#3a3a3a" 
+          metalness={0.95} 
+          roughness={0.15}
         />
       </mesh>
       
-      {/* Top metal ring - adjusted for wider strap */}
-      <group position={[0, 0, 0.01]}>
-        <mesh castShadow>
-          <ringGeometry args={[0.08 * scale, 0.13 * scale, 48]} />
+      <mesh castShadow position={[0.035, 0.05, 0]} rotation={[0, 0, -0.3]}>
+        <boxGeometry args={[0.025, 0.08, 0.02]} />
+        <meshStandardMaterial 
+          color="#2a2a2a" 
+          metalness={0.9} 
+          roughness={0.2}
+        />
+      </mesh>
+      
+      <mesh castShadow position={[0.04, 0, 0]}>
+        <cylinderGeometry args={[0.01, 0.01, 0.06, 8]} />
+        <meshStandardMaterial 
+          color="#4a4a4a" 
+          metalness={0.7} 
+          roughness={0.4}
+        />
+      </mesh>
+      
+      <mesh castShadow position={[0, 0.12, 0]}>
+        <torusGeometry args={[0.045, 0.015, 12, 24]} />
+        <meshStandardMaterial 
+          color="#2a2a2a" 
+          metalness={0.95} 
+          roughness={0.15}
+        />
+      </mesh>
+      
+      <group position={[0, -0.08, 0]}>
+        <mesh castShadow rotation={[0, 0, Math.PI]}>
+          <torusGeometry args={[0.03, 0.01, 12, 24, Math.PI]} />
           <meshStandardMaterial 
-            color="#4a4a4a" 
+            color="#3a3a3a" 
             metalness={0.95} 
-            roughness={0.1}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-        
-        <mesh position={[0, 0, 0.002]}>
-          <ringGeometry args={[0.09 * scale, 0.11 * scale, 48]} />
-          <meshStandardMaterial 
-            color="#7a7a7a" 
-            metalness={0.98} 
-            roughness={0.05}
-            side={THREE.DoubleSide}
-            emissive="#2a2a2a"
-            emissiveIntensity={0.2}
+            roughness={0.15}
           />
         </mesh>
       </group>
       
-      {/* Bottom metal ring - adjusted for wider strap */}
-      <group position={[cardHoleX, cardHoleY, cardHoleZ + 0.001]}>
-        <mesh castShadow>
-          <ringGeometry args={[0.07 * scale, 0.11 * scale, 48]} />
-          <meshStandardMaterial 
-            color="#4a4a4a" 
-            metalness={0.95} 
-            roughness={0.1}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-        
-        <mesh position={[0, 0, 0.002]}>
-          <ringGeometry args={[0.08 * scale, 0.095 * scale, 48]} />
-          <meshStandardMaterial 
-            color="#7a7a7a" 
-            metalness={0.98} 
-            roughness={0.05}
-            side={THREE.DoubleSide}
-            emissive="#2a2a2a"
-            emissiveIntensity={0.2}
-          />
-        </mesh>
-      </group>
+      <mesh castShadow position={[0.045, 0.02, 0]}>
+        <boxGeometry args={[0.02, 0.04, 0.035]} />
+        <meshStandardMaterial 
+          color="#4a4a4a" 
+          metalness={0.85} 
+          roughness={0.25}
+        />
+      </mesh>
     </group>
   );
 }
 
 
-// Bigger Responsive ID Card
-function SwingingIDCard({ profileImagePath }) {
-  const cardRef = useRef();
-  const { gl, size } = useThree();
-  
-  const [isDragging, setIsDragging] = useState(false);
-  const [stretchPos, setStretchPos] = useState({ x: 0, z: 0 });
-  const [velocity, setVelocity] = useState({ x: 0, z: 0 });
-  const [lastMouse, setLastMouse] = useState({ x: 0, y: 0 });
-  
-  // Bigger scale for all screen sizes
-  const isMobile = size.width < 768;
-  const isTablet = size.width >= 768 && size.width < 1024;
-  
-  const responsiveScale = isMobile ? 0.85 : isTablet ? 1.1 : 1.3; // Increased from 0.6/0.8/1
-  const maxStretchMultiplier = isMobile ? 0.8 : 1;
-  
-  const idleSwayRef = useRef({
-    phaseX: Math.random() * Math.PI * 2,
-    phaseZ: Math.random() * Math.PI * 2,
-    amplitude: 0.02 * responsiveScale,
-    frequency: 0.35
-  });
-  
-  useFrame((state, delta) => {
-    if (!cardRef.current) return;
-    
-    if (!isDragging) {
-      const hasMovement = Math.abs(velocity.x) > 0.001 || Math.abs(velocity.z) > 0.001 ||
-                          Math.abs(stretchPos.x) > 0.01 || Math.abs(stretchPos.z) > 0.01;
-      
-      if (hasMovement) {
-        const spring = 0.018; // Slightly softer spring
-        const damping = 0.94; // More damping for smoother motion
-        
-        const forceX = -stretchPos.x * spring;
-        const forceZ = -stretchPos.z * spring;
-        
-        let newVelX = (velocity.x + forceX) * damping;
-        let newVelZ = (velocity.z + forceZ) * damping;
-        
-        if (Math.abs(newVelX) < 0.001) newVelX = 0;
-        if (Math.abs(newVelZ) < 0.001) newVelZ = 0;
-        
-        setVelocity({ x: newVelX, z: newVelZ });
-        
-        const newStretchX = Math.abs(newVelX) < 0.001 && Math.abs(stretchPos.x) < 0.01 ? 0 : stretchPos.x + newVelX;
-        const newStretchZ = Math.abs(newVelZ) < 0.001 && Math.abs(stretchPos.z) < 0.01 ? 0 : stretchPos.z + newVelZ;
-        
-        setStretchPos({ x: newStretchX, z: newStretchZ });
-        
-        cardRef.current.position.x = newStretchX * responsiveScale;
-        cardRef.current.position.z = newStretchZ * responsiveScale;
-      } else {
-        const time = state.clock.elapsedTime;
-        const sway = idleSwayRef.current;
-        
-        const idleX = Math.sin(time * sway.frequency + sway.phaseX) * sway.amplitude;
-        const idleZ = Math.sin(time * sway.frequency * 1.3 + sway.phaseZ) * sway.amplitude;
-        
-        cardRef.current.position.x = idleX;
-        cardRef.current.position.z = idleZ;
-        setStretchPos({ x: idleX / responsiveScale, z: idleZ / responsiveScale });
-      }
-    }
-  });
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (isDragging) {
-        handlePointerMove(e);
-      }
-    };
-
-    const handleMouseUp = () => {
-      if (isDragging) {
-        handlePointerUp();
-      }
-    };
-
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-      // Use passive: true to allow scrolling
-      window.addEventListener('touchmove', handleMouseMove, { passive: true });
-      window.addEventListener('touchend', handleMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchmove', handleMouseMove);
-      window.removeEventListener('touchend', handleMouseUp);
-    };
-  }, [isDragging, stretchPos]);
-
-  const handlePointerDown = (e) => {
-    // Only prevent default for mouse events, allow touch events to bubble for scrolling
-    if (e.type === 'mousedown') {
-      e.stopPropagation();
-    }
-    setIsDragging(true);
-    setVelocity({ x: 0, z: 0 });
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    setLastMouse({ x: clientX, y: clientY });
-    gl.domElement.style.cursor = 'grabbing';
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDragging || !cardRef.current) return;
-    
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    
-    const deltaX = clientX - lastMouse.x;
-    const deltaY = clientY - lastMouse.y;
-    
-    // If vertical movement is much larger than horizontal, allow page scroll
-    if (e.touches && Math.abs(deltaY) > Math.abs(deltaX) * 1.5 && Math.abs(deltaY) > 10) {
-      setIsDragging(false);
-      gl.domElement.style.cursor = 'default';
-      return;
-    }
-    
-    const sensitivity = isMobile ? 0.007 : 0.005;
-    const newStretchX = stretchPos.x + deltaX * sensitivity;
-    const newStretchZ = stretchPos.z - deltaY * sensitivity;
-    
-    const maxStretch = 1.8 * maxStretchMultiplier; // Increased max stretch
-    const distance = Math.sqrt(newStretchX * newStretchX + newStretchZ * newStretchZ);
-    
-    let clampedX = newStretchX;
-    let clampedZ = newStretchZ;
-    
-    if (distance > maxStretch) {
-      const scale = maxStretch / distance;
-      clampedX = newStretchX * scale;
-      clampedZ = newStretchZ * scale;
-    }
-    
-    setStretchPos({ x: clampedX, z: clampedZ });
-    setVelocity({
-      x: (clampedX - stretchPos.x) * 1.5,
-      z: (clampedZ - stretchPos.z) * 1.5
-    });
-    
-    cardRef.current.position.x = clampedX * responsiveScale;
-    cardRef.current.position.z = clampedZ * responsiveScale;
-    
-    setLastMouse({ x: clientX, y: clientY });
-  };
-
-  const handlePointerUp = () => {
-    setIsDragging(false);
-    gl.domElement.style.cursor = 'grab';
-  };
-
-  const angle = { x: 0, z: 0 };
-
+// Card Ring
+function CardRing({ position }) {
   return (
-    <group position={[0, 3 * responsiveScale, 0]} scale={responsiveScale}>
-      <RealisticLanyard angle={angle} stretchPos={stretchPos} scale={responsiveScale} />
+    <group position={position}>
+      <mesh castShadow>
+        <torusGeometry args={[0.06, 0.015, 12, 24]} />
+        <meshStandardMaterial 
+          color="#3a3a3a" 
+          metalness={0.9} 
+          roughness={0.2}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+
+
+// Fabric Strap
+function FabricStrap({ curve, claspPosition }) {
+  const strapRef = useRef();
+  
+  useFrame(() => {
+    if (!strapRef.current) return;
+    
+    const points = curve.getPoints(50);
+    const geometry = new THREE.BufferGeometry();
+    
+    const vertices = [];
+    const uvs = [];
+    const indices = [];
+    
+    const strapWidth = 0.4;
+    const strapThickness = 0.008;
+    
+    for (let i = 0; i < points.length; i++) {
+      const point = points[i];
+      const nextPoint = points[Math.min(i + 1, points.length - 1)];
       
-      <group 
-        ref={cardRef}
-        position={[0, -3, 0]}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerEnter={() => gl.domElement.style.cursor = 'grab'}
-        onPointerLeave={() => {
-          setIsDragging(false);
-          gl.domElement.style.cursor = 'default';
-        }}
+      const direction = new THREE.Vector3().subVectors(nextPoint, point).normalize();
+      const perpendicular = new THREE.Vector3(-direction.y, direction.x, 0).normalize();
+      
+      const left = new THREE.Vector3().addVectors(point, perpendicular.clone().multiplyScalar(strapWidth / 2));
+      const right = new THREE.Vector3().addVectors(point, perpendicular.clone().multiplyScalar(-strapWidth / 2));
+      
+      vertices.push(left.x, left.y, left.z + strapThickness);
+      vertices.push(right.x, right.y, right.z + strapThickness);
+      vertices.push(left.x, left.y, left.z - strapThickness);
+      vertices.push(right.x, right.y, right.z - strapThickness);
+      
+      const v = i / (points.length - 1);
+      uvs.push(0, v, 1, v, 0, v, 1, v);
+      
+      if (i < points.length - 1) {
+        const base = i * 4;
+        indices.push(base, base + 4, base + 1);
+        indices.push(base + 1, base + 4, base + 5);
+        indices.push(base + 2, base + 3, base + 6);
+        indices.push(base + 3, base + 7, base + 6);
+        indices.push(base, base + 2, base + 4);
+        indices.push(base + 4, base + 2, base + 6);
+        indices.push(base + 1, base + 5, base + 3);
+        indices.push(base + 5, base + 7, base + 3);
+      }
+    }
+    
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    
+    if (strapRef.current.geometry) {
+      strapRef.current.geometry.dispose();
+    }
+    strapRef.current.geometry = geometry;
+  });
+  
+  return (
+    <>
+      {/* Main fabric strap - NOW PURE BLACK */}
+      <mesh ref={strapRef} castShadow receiveShadow>
+        <bufferGeometry />
+        <meshStandardMaterial 
+          color="#000000"  // ← Changed to pure black
+          roughness={0.95}  // ← Increased for matte look
+          metalness={0.0}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      
+      {/* Folded end of lanyard that loops through clasp ring */}
+      <group position={claspPosition}>
+        {/* Small fabric loop through the clasp ring */}
+        <mesh castShadow position={[0, 0.12, 0]}>
+          <torusGeometry args={[0.045, 0.025, 8, 16, Math.PI]} />
+          <meshStandardMaterial 
+            color="#000000"  // ← Changed to pure black
+            roughness={0.95}  // ← Increased for matte look
+            metalness={0.0}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+        
+        {/* Stitched fold-back section */}
+        <mesh castShadow position={[0, 0.08, 0]}>
+          <boxGeometry args={[0.4, 0.04, 0.008]} />
+          <meshStandardMaterial 
+            color="#000000"  // ← Changed to pure black
+            roughness={0.95}  // ← Increased for matte look
+            metalness={0.0}
+          />
+        </mesh>
+        
+        {/* Visible stitching lines - slightly lighter for visibility */}
+        <mesh castShadow position={[0, 0.075, 0.005]}>
+          <boxGeometry args={[0.38, 0.002, 0.001]} />
+          <meshStandardMaterial 
+            color="#2a2a2a"  // ← Kept slightly gray so stitching is visible
+            roughness={0.9}
+            metalness={0.0}
+          />
+        </mesh>
+        
+        <mesh castShadow position={[0, 0.085, 0.005]}>
+          <boxGeometry args={[0.38, 0.002, 0.001]} />
+          <meshStandardMaterial 
+            color="#2a2a2a"  // ← Kept slightly gray so stitching is visible
+            roughness={0.9}
+            metalness={0.0}
+          />
+        </mesh>
+      </group>
+    </>
+  );
+}
+
+
+// Main Band component
+function Band() {
+  const fixed = useRef();
+  const j1 = useRef();
+  const j2 = useRef();
+  const j3 = useRef();
+  const card = useRef();
+  
+  const vec = new THREE.Vector3();
+  const ang = new THREE.Vector3();
+  const rot = new THREE.Vector3();
+  const dir = new THREE.Vector3();
+  
+  const [dragged, drag] = useState(false);
+  const [claspPos, setClaspPos] = useState(new THREE.Vector3(0, 1.95, 0));
+  
+  const { camera } = useThree();
+  
+  const [curve] = useState(() => new THREE.CatmullRomCurve3([
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3()
+  ]));
+  
+  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 0.6]);
+  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 0.6]);
+  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 0.6]);
+  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.95, 0]]);
+  
+  useFrame((state) => {
+    if (!card.current) return;
+    
+    const cardTranslation = card.current.translation();
+    const claspWorldPos = new THREE.Vector3(
+      cardTranslation.x,
+      cardTranslation.y + 1.95,
+      cardTranslation.z
+    );
+    setClaspPos(claspWorldPos);
+    
+    curve.points[0].set(claspWorldPos.x, claspWorldPos.y + 0.12, claspWorldPos.z);
+    curve.points[1].copy(j2.current.translation());
+    curve.points[2].copy(j1.current.translation());
+    curve.points[3].copy(fixed.current.translation());
+    
+    if (dragged) {
+      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera);
+      dir.copy(vec).sub(camera.position).normalize();
+      vec.add(dir.multiplyScalar(camera.position.length()));
+      
+      [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
+      
+      // Allow dragging in all directions - remove Z lock during drag
+      card.current?.setNextKinematicTranslation({
+        x: vec.x - dragged.x,
+        y: vec.y - dragged.y,
+        z: 0
+      });
+    }
+    
+    // Only lock rotation, not position during non-drag
+    if (!dragged) {
+      card.current.setRotation({ x: 0, y: 0, z: 0, w: 1 }, false);
+      card.current.setTranslation({ x: cardTranslation.x, y: cardTranslation.y, z: 0 }, false);
+      
+      if (j1.current) {
+        const j1Trans = j1.current.translation();
+        j1.current.setTranslation({ x: j1Trans.x, y: j1Trans.y, z: 0 }, false);
+      }
+      if (j2.current) {
+        const j2Trans = j2.current.translation();
+        j2.current.setTranslation({ x: j2Trans.x, y: j2Trans.y, z: 0 }, false);
+      }
+      if (j3.current) {
+        const j3Trans = j3.current.translation();
+        j3.current.setTranslation({ x: j3Trans.x, y: j3Trans.y, z: 0 }, false);
+      }
+    }
+  });
+  
+  return (
+    <>
+      <RigidBody ref={fixed} type="fixed" position={[0, 3.2, 0]} />
+      
+      <RigidBody position={[0, 2.6, 0]} ref={j1} lockRotations enabledRotations={[false, false, false]}>
+        <BallCollider args={[0.05]} />
+      </RigidBody>
+      
+      <RigidBody position={[0, 2, 0]} ref={j2} lockRotations enabledRotations={[false, false, false]}>
+        <BallCollider args={[0.05]} />
+      </RigidBody>
+      
+      <RigidBody position={[0, 1.4, 0]} ref={j3} lockRotations enabledRotations={[false, false, false]}>
+        <BallCollider args={[0.05]} />
+      </RigidBody>
+      
+      <FabricStrap curve={curve} claspPosition={claspPos} />
+      
+      <RigidBody
+        ref={card}
+        type={dragged ? 'kinematicPosition' : 'dynamic'}
+        position={[0, 1, 0]}
+        colliders={false}
+        lockRotations
+        enabledRotations={[false, false, false]}
       >
-        {/* Card with premium finish */}
-        <mesh castShadow receiveShadow>
+        <CuboidCollider args={[1, 1, 0.01]} />
+        
+        <CardRing position={[0, 1.75, 0]} />
+        <LobsterClaspConnector position={[0, 1.95, 0]} />
+        
+        {/* Make the card easier to click by adding pointer events */}
+        <mesh
+          castShadow
+          receiveShadow
+          onPointerOver={() => document.body.style.cursor = 'grab'}
+          onPointerOut={() => document.body.style.cursor = 'default'}
+          onPointerUp={(e) => {
+            e.target.releasePointerCapture(e.pointerId);
+            drag(false);
+            document.body.style.cursor = 'grab';
+          }}
+          onPointerDown={(e) => {
+            e.target.setPointerCapture(e.pointerId);
+            document.body.style.cursor = 'grabbing';
+            drag(
+              new THREE.Vector3()
+                .copy(e.point)
+                .sub(vec.copy(card.current.translation()))
+            );
+          }}
+        >
           <boxGeometry args={[2.5, 3.5, 0.04]} />
           <meshPhysicalMaterial
             color="#2a2a2a"
@@ -484,12 +377,11 @@ function SwingingIDCard({ profileImagePath }) {
             clearcoatRoughness={0.15}
           />
         </mesh>
-
+        
         <Suspense fallback={null}>
-          <ProfileImage imagePath={profileImagePath} />
+          <ProfileImage imagePath={profileImage} />
         </Suspense>
-
-        {/* Glass overlay effect */}
+        
         <mesh position={[0, 0, 0.021]}>
           <planeGeometry args={[2.5, 3.5]} />
           <meshPhysicalMaterial
@@ -501,43 +393,39 @@ function SwingingIDCard({ profileImagePath }) {
             side={THREE.DoubleSide}
           />
         </mesh>
-
-        {/* Card hole */}
-        <mesh position={[0, 1.6, 0]}>
-          <cylinderGeometry args={[0.06, 0.06, 0.05, 16]} />
+        
+        <mesh position={[0, 1.65, 0]}>
+          <cylinderGeometry args={[0.08, 0.08, 0.06, 16]} />
           <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.5} />
         </mesh>
-      </group>
-    </group>
+      </RigidBody>
+    </>
   );
 }
 
+
+
 function FloatingCard3D() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
   return (
     <div className="floating-card-3d-container">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 45 }} // Adjusted camera for bigger card
+        camera={{ position: [0, 0, 10], fov: 45 }}
         shadows
         gl={{ antialias: true, alpha: true }}
-        style={{ touchAction: 'pan-y' }}
+        style={{ touchAction: 'none' }}
       >
         <Suspense fallback={null}>
-          <ambientLight intensity={0.7} />
+          <ambientLight intensity={0.8} />
           <directionalLight position={[5, 8, 5]} intensity={2.5} castShadow />
           <spotLight position={[0, 5, 3]} angle={0.5} intensity={1.8} castShadow />
           <pointLight position={[-5, 0, -5]} intensity={0.6} color="#4a90e2" />
           <pointLight position={[5, 0, -5]} intensity={0.6} color="#9b59b6" />
           
           <Environment preset="studio" />
-          <SwingingIDCard profileImagePath={profileImage} />
+          
+          <Physics>
+            <Band />
+          </Physics>
           
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4, 0]} receiveShadow>
             <planeGeometry args={[25, 25]} />
@@ -548,5 +436,7 @@ function FloatingCard3D() {
     </div>
   );
 }
+
+
 
 export default FloatingCard3D;
