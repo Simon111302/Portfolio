@@ -13,8 +13,6 @@ import * as THREE from 'three';
 import profileImage from '../assets/simon2.jpg';
 import '../design/FloatingCard3D.css';
 
-
-
 // Profile Image
 function ProfileImage({ imagePath }) {
   const profileImageTexture = useTexture(imagePath);
@@ -30,8 +28,6 @@ function ProfileImage({ imagePath }) {
     </mesh>
   );
 }
-
-
 
 // Lobster Clasp
 function LobsterClaspConnector({ position, lanyardEndPoint }) {
@@ -96,8 +92,6 @@ function LobsterClaspConnector({ position, lanyardEndPoint }) {
   );
 }
 
-
-
 // Card Ring
 function CardRing({ position }) {
   return (
@@ -113,8 +107,6 @@ function CardRing({ position }) {
     </group>
   );
 }
-
-
 
 // Fabric Strap
 function FabricStrap({ curve, claspPosition }) {
@@ -177,45 +169,40 @@ function FabricStrap({ curve, claspPosition }) {
   
   return (
     <>
-      {/* Main fabric strap - NOW PURE BLACK */}
       <mesh ref={strapRef} castShadow receiveShadow>
         <bufferGeometry />
         <meshStandardMaterial 
-          color="#000000"  // ← Changed to pure black
-          roughness={0.95}  // ← Increased for matte look
+          color="#000000"
+          roughness={0.95}
           metalness={0.0}
           side={THREE.DoubleSide}
         />
       </mesh>
       
-      {/* Folded end of lanyard that loops through clasp ring */}
       <group position={claspPosition}>
-        {/* Small fabric loop through the clasp ring */}
         <mesh castShadow position={[0, 0.12, 0]}>
           <torusGeometry args={[0.045, 0.025, 8, 16, Math.PI]} />
           <meshStandardMaterial 
-            color="#000000"  // ← Changed to pure black
-            roughness={0.95}  // ← Increased for matte look
+            color="#000000"
+            roughness={0.95}
             metalness={0.0}
             side={THREE.DoubleSide}
           />
         </mesh>
         
-        {/* Stitched fold-back section */}
         <mesh castShadow position={[0, 0.08, 0]}>
           <boxGeometry args={[0.4, 0.04, 0.008]} />
           <meshStandardMaterial 
-            color="#000000"  // ← Changed to pure black
-            roughness={0.95}  // ← Increased for matte look
+            color="#000000"
+            roughness={0.95}
             metalness={0.0}
           />
         </mesh>
         
-        {/* Visible stitching lines - slightly lighter for visibility */}
         <mesh castShadow position={[0, 0.075, 0.005]}>
           <boxGeometry args={[0.38, 0.002, 0.001]} />
           <meshStandardMaterial 
-            color="#2a2a2a"  // ← Kept slightly gray so stitching is visible
+            color="#2a2a2a"
             roughness={0.9}
             metalness={0.0}
           />
@@ -224,7 +211,7 @@ function FabricStrap({ curve, claspPosition }) {
         <mesh castShadow position={[0, 0.085, 0.005]}>
           <boxGeometry args={[0.38, 0.002, 0.001]} />
           <meshStandardMaterial 
-            color="#2a2a2a"  // ← Kept slightly gray so stitching is visible
+            color="#2a2a2a"
             roughness={0.9}
             metalness={0.0}
           />
@@ -233,7 +220,6 @@ function FabricStrap({ curve, claspPosition }) {
     </>
   );
 }
-
 
 // Main Band component
 function Band() {
@@ -288,7 +274,6 @@ function Band() {
       
       [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
       
-      // Allow dragging in all directions - remove Z lock during drag
       card.current?.setNextKinematicTranslation({
         x: vec.x - dragged.x,
         y: vec.y - dragged.y,
@@ -296,7 +281,6 @@ function Band() {
       });
     }
     
-    // Only lock rotation, not position during non-drag
     if (!dragged) {
       card.current.setRotation({ x: 0, y: 0, z: 0, w: 1 }, false);
       card.current.setTranslation({ x: cardTranslation.x, y: cardTranslation.y, z: 0 }, false);
@@ -347,7 +331,6 @@ function Band() {
         <CardRing position={[0, 1.75, 0]} />
         <LobsterClaspConnector position={[0, 1.95, 0]} />
         
-        {/* Make the card easier to click by adding pointer events */}
         <mesh
           castShadow
           receiveShadow
@@ -403,16 +386,19 @@ function Band() {
   );
 }
 
-
-
 function FloatingCard3D() {
   return (
-    <div className="floating-card-3d-container">
+    <div className="floating-card-3d-container" style={{ pointerEvents: 'none' }}>
       <Canvas
-        camera={{ position: [0, 0, 10], fov: 45 }}
+        camera={{ 
+          position: [0, 0, 10], 
+          fov: 45,
+          near: 0.1,
+          far: 10000
+        }}
         shadows
         gl={{ antialias: true, alpha: true }}
-        style={{ touchAction: 'none' }}
+        style={{ touchAction: 'none', pointerEvents: 'auto' }}
       >
         <Suspense fallback={null}>
           <ambientLight intensity={0.8} />
@@ -423,20 +409,13 @@ function FloatingCard3D() {
           
           <Environment preset="studio" />
           
-          <Physics>
+          <Physics gravity={[0, -9.81, 0]}>
             <Band />
           </Physics>
-          
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4, 0]} receiveShadow>
-            <planeGeometry args={[25, 25]} />
-            <shadowMaterial transparent opacity={0.25} />
-          </mesh>
         </Suspense>
       </Canvas>
     </div>
   );
 }
-
-
 
 export default FloatingCard3D;
