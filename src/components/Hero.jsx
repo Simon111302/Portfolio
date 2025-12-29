@@ -8,8 +8,7 @@ function Hero() {
           <div className="hero-title">
             <h1>I'm Simon Belenia</h1>
           </div>
-
-          <h2>Software Developer/Website Developer</h2>
+          <h2>Software Developer</h2>
           <p>
             Dedicated student developer committed to continuous learning and professional
             growth in modern web technologies and full-stack development.

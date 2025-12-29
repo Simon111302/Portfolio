@@ -1,4 +1,4 @@
-import { FaHome, FaProjectDiagram, FaUser, FaEnvelope } from 'react-icons/fa';
+import { FaHome, FaUser, FaEnvelope } from 'react-icons/fa';
 
 function Navbar() {
     return (
@@ -8,7 +8,6 @@ function Navbar() {
         <ul className="nav-links">
           <li><a href="#home"><FaHome/> Home</a></li>
           <li><a href="#tools"><FaUser /> About</a></li>
-          <li><a href="#projects"><FaProjectDiagram /> Project</a></li>
           <li><a href="#contact"><FaEnvelope /> Contact</a></li>
         </ul>
       </div>

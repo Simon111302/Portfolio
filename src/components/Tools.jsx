@@ -1,5 +1,9 @@
 import { useEffect, Suspense } from 'react';
 import FloatingCard3D from './FloatingCard3D';
+import weatherImg from '../assets/weather.png';
+import ChatBot from '../assets/chatbot.png';
+import movieImg from '../assets/movie.png';
+
 
 // Import your tech icons
 import cIcon from '../../img/c-.png';
@@ -15,6 +19,7 @@ import mongoIcon from '../../img/mongodb.png';
 import sqlIcon from '../../img/ssms.png';
 import phpIcon from '../../img/php.png';
 import logo from '../../img/logo.png';
+
 
 function Tools() {
   const allSkills = [
@@ -33,10 +38,56 @@ function Tools() {
     { name: 'SQL Server', icon: sqlIcon }
   ];
 
+  const projects = [
+    {
+      id: 1,
+      title: "Weather App",
+      description: "Real-time weather application for Philippine cities using OpenWeatherMap API. Features responsive design with dark theme and hourly forecasts.",
+      technologies: ["React", "OpenWeatherMap API", "JavaScript"],
+      image: weatherImg,
+      liveLink: "https://simonweath.vercel.app/",
+      features: [
+        "Real-time weather data for Philippine cities",
+        "Hourly forecast display",
+        "Responsive design (mobile & desktop)",
+        "City selector dropdown"
+      ]
+    },
+    {
+      id: 2,
+      title: "Simple Chatbot",
+      description: "An interactive AI chatbot application with a clean and intuitive user interface. Built to demonstrate conversational AI integration.",
+      technologies: ["React", "AI Integration", "Vercel", "JavaScript"],
+      image: ChatBot, 
+      liveLink: "https://simonchatbot.vercel.app",
+      features: [
+        "Real-time chat interface",
+        "AI-powered responses",
+        "Clean and modern UI",
+        "Fast and responsive"
+      ]
+    },
+    {
+      id: 3,
+      title: "Movie Website",
+      description: "A dynamic movie browsing application built with React and TypeScript. Discover trending movies, search your favorites, and explore detailed information.",
+      technologies: ["React", "TypeScript", "Movie API"],
+      image: movieImg,
+      liveLink: "https://simonmoves.vercel.app/",
+      features: [
+        "Browse trending and popular movies",
+        "Search functionality",
+        "Detailed movie information",
+        "Responsive design"
+      ]
+    }
+  ];
+
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        const cards = entry.target.querySelectorAll('.skill-card');
+        const cards = entry.target.querySelectorAll('.skill-card, .project-card');
         
         if (entry.isIntersecting) {
           cards.forEach((card, index) => {
@@ -44,23 +95,22 @@ function Tools() {
               card.classList.add('animate-in');
             }, index * 100);
           });
-        } else {
-          cards.forEach((card) => {
-            card.classList.remove('animate-in');
-          });
+          // Disconnect observer after animation triggers once
+          observer.unobserve(entry.target);
         }
       });
     }, {
       threshold: 0.2
     });
-
+  
     const toolsSection = document.querySelector('#tools');
     if (toolsSection) {
       observer.observe(toolsSection);
     }
-
+  
     return () => observer.disconnect();
   }, []);
+  
 
   const renderScrollingSection = (items, title) => (
     <div className="tools-category">
@@ -86,6 +136,7 @@ function Tools() {
     </div>
   );
 
+
   return (
     <section id="tools" className="tools">
       <h2>About</h2>
@@ -106,9 +157,35 @@ function Tools() {
           </p>
         </div>
       </div>
+      <div className="tech-stack-section">
+      <h2>Tech Stack</h2>
+      </div>
       {renderScrollingSection(allSkills, '')}
+
+      {/* Projects Section */}
+      <div id="projects" className="projects-section">
+        <h2>My Projects</h2>
+        <div className="projects-grid">
+          {projects.map((project) => (
+            <div key={project.id} className="project-card">
+              <img src={project.image} alt={project.title} />
+              <h3>{project.title}</h3>
+              <p>{project.description}</p>
+              <div className="tech-stack">
+                {project.technologies.map((tech, index) => (
+                  <span key={index} className="tech-badge">{tech}</span>
+                ))}
+              </div>
+              <div className="project-links">
+                <a href={project.liveLink} target="_blank" rel="noopener noreferrer">Live Demo</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
+
 
 export default Tools;
