@@ -30,8 +30,15 @@ function Contact() {
     setIsLoading(true);
     setStatus('');
 
-    const formData = new FormData(formRef.current);
-    const data = Object.fromEntries(formData);
+    // ✅ FIXED: Direct form access (clean JSON)
+    const data = {
+      name: e.target.name.value,
+      email: e.target.email.value,
+      subject: e.target.subject.value,
+      message: e.target.message.value
+    };
+
+    console.log('Sending data:', data); // DEBUG
 
     try {
       const response = await fetch('/api/send-email', {
@@ -43,15 +50,17 @@ function Contact() {
       });
 
       const result = await response.json();
+      console.log('API response:', result); // DEBUG
       
       if (result.success) {
         setStatus('success');
         formRef.current.reset();
       } else {
         setStatus('error');
+        console.log('API error:', result.message);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Network error:', error);
       setStatus('error');
     } finally {
       setIsLoading(false);
