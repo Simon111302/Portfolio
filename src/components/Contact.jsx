@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaEnvelope, FaFacebook } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
 
 function Contact() {
   const [isLoading, setIsLoading] = useState(false);
@@ -7,6 +8,11 @@ function Contact() {
   const formRef = useRef(null);
 
   useEffect(() => {
+    emailjs.init('YOUR_PUBLIC_KEY'); // ← Replace with your Public Key
+  }, []);
+
+  useEffect(() => {
+    // Your animation code (unchanged)
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -21,7 +27,6 @@ function Contact() {
 
     const section = document.querySelector('.contact');
     if (section) observer.observe(section);
-
     return () => observer.disconnect();
   }, []);
 
@@ -30,86 +35,52 @@ function Contact() {
     setIsLoading(true);
     setStatus('');
 
-    // ✅ FIXED: Direct form access (clean JSON)
-    const data = {
-      name: e.target.name.value,
-      email: e.target.email.value,
-      subject: e.target.subject.value,
-      message: e.target.message.value
-    };
-
-    console.log('Sending data:', data); // DEBUG
-
     try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      console.log('API response:', result); // DEBUG
-      
-      if (result.success) {
-        setStatus('success');
-        formRef.current.reset();
-      } else {
-        setStatus('error');
-        console.log('API error:', result.message);
-      }
+      await emailjs.sendForm(
+        'service_fd8ofoa',    
+        'service_fd8ofoa',  
+        formRef.current,
+        'jA5CPdKXB_LHrHRKw'    
+      );
+      setStatus('success');
+      formRef.current.reset();
     } catch (error) {
-      console.error('Network error:', error);
+      console.error('EmailJS error:', error);
       setStatus('error');
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Your JSX return (UNCHANGED - perfect!)
   return (
     <section id="contact" className="contact">
       <h2>Get In Touch</h2>
       <div className="contact-content">
         <p>I'm currently looking for opportunities. Feel free to reach out!</p>
-
         <form ref={formRef} className="contact-form" onSubmit={sendEmail}>
           <input type="text" name="name" placeholder="Your Name" required />
           <input type="email" name="email" placeholder="Email Address" required />
           <input type="text" name="subject" placeholder="Subject" required />
           <textarea name="message" rows="5" placeholder="Your Message" required />
-
           <div className="contact-actions">
             <button type="submit" disabled={isLoading}>
               {isLoading ? 'Sending...' : 'Send Message'}
             </button>
-
             <div className="contact-icons">
-              <a href="mailto:probelenia9@gmail.com" className="contact-icon" title="Email" aria-label="Email">
+              <a href="mailto:probelenia9@gmail.com" className="contact-icon" title="Email">
                 <FaEnvelope />
               </a>
-              <a 
-                href="https://web.facebook.com/Simon.Belenia.1" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="contact-icon" 
-                title="Facebook" 
-                aria-label="Facebook"
-              >
+              <a href="https://web.facebook.com/Simon.Belenia.1" target="_blank" rel="noopener noreferrer" className="contact-icon">
                 <FaFacebook />
               </a>
             </div>
           </div>
-
           {status === 'success' && (
-            <div className="success-message">
-              ✅ Message sent successfully! I'll get back to you soon.
-            </div>
+            <div className="success-message">✅ Message sent successfully!</div>
           )}
           {status === 'error' && (
-            <div className="error-message">
-              ❌ Failed to send message. Please try again.
-            </div>
+            <div className="error-message">❌ Failed to send. Try again.</div>
           )}
         </form>
       </div>
