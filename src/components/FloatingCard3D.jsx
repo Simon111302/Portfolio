@@ -12,11 +12,14 @@ import { Suspense, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import profileImage from '../assets/simon2.jpg';
+import reactIcon from '../../img/react.png';
+import csharpIcon from '../../img/c-sharp.png';
+import phpIcon from '../../img/php.png';
+import pythonIcon from '../../img/python.png';
+import cppIcon from '../../img/c-.png';
 import '../design/FloatingCard3D.css';
 
-
 extend({ MeshLineGeometry, MeshLineMaterial });
-
 
 // Profile Image
 function ProfileImage({ imagePath }) {
@@ -34,6 +37,81 @@ function ProfileImage({ imagePath }) {
   );
 }
 
+// Back of Card with Tech Icons
+// Back of Card with Tech Icons in Circular Arrangement
+// Back of Card with Tech Icons in Circular Arrangement
+function BackOfCard() {
+  const [reactTex, csharpTex, phpTex, pythonTex, cppTex] = useTexture([
+    reactIcon,
+    csharpIcon,
+    phpIcon,
+    pythonIcon,
+    cppIcon
+  ]);
+
+  [reactTex, csharpTex, phpTex, pythonTex, cppTex].forEach(tex => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.anisotropy = 16;
+  });
+
+  const iconSize = 0.4;
+  const radius = 0.85;
+  const icons = [
+    { texture: reactTex },
+    { texture: csharpTex },
+    { texture: phpTex },
+    { texture: pythonTex },
+    { texture: cppTex }
+  ];
+
+  return (
+    <group position={[0, 0, -0.026]} rotation={[0, Math.PI, 0]}>
+      {/* Background */}
+      <mesh position={[0, 0, -0.001]}>
+        <planeGeometry args={[2.4, 3.4]} />
+        <meshStandardMaterial
+          color="#1a1a1a"
+          metalness={0.2}
+          roughness={0.8}
+        />
+      </mesh>
+      
+      {/* Tech Icons arranged in a circle */}
+      {icons.map((icon, index) => {
+        const angle = (index / icons.length) * Math.PI * 2 - Math.PI / 2;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        
+        return (
+          <group key={index} position={[x, y, 0.002]}>
+            {/* Black circular background for each icon */}
+            <mesh position={[0, 0, -0.001]}>
+              <circleGeometry args={[iconSize / 1.5, 64]} />
+              <meshStandardMaterial
+                color="#000000"
+                metalness={0.3}
+                roughness={0.7}
+              />
+            </mesh>
+            
+            {/* Icon with better quality */}
+            <mesh>
+              <circleGeometry args={[iconSize / 1.7, 64]} />
+              <meshStandardMaterial
+                map={icon.texture}
+                transparent
+                alphaTest={0.1}
+                side={THREE.DoubleSide}
+              />
+            </mesh>
+          </group>
+        );
+      })}
+    </group>
+  );
+}
 
 // Lobster Clasp
 function LobsterClaspConnector({ position }) {
@@ -112,7 +190,6 @@ function LobsterClaspConnector({ position }) {
   );
 }
 
-
 // Card Ring
 function CardRing({ position }) {
   return (
@@ -131,7 +208,6 @@ function CardRing({ position }) {
     </group>
   );
 }
-
 
 // Fabric Strap
 function FabricStrap({ curve }) {
@@ -220,7 +296,6 @@ function FabricStrap({ curve }) {
   );
 }
 
-
 // Main Band component
 function Band() {
   const fixed = useRef();
@@ -228,13 +303,23 @@ function Band() {
   const j2 = useRef();
   const j3 = useRef();
   const card = useRef();
+  const meshRef = useRef();
   
   const vec = new THREE.Vector3();
   const dir = new THREE.Vector3();
   
   const [dragged, drag] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const lastPosition = useRef(new THREE.Vector3());
   const velocity = useRef(new THREE.Vector3());
+  
+  // Smooth rotation state
+  const startQuaternion = useRef(new THREE.Quaternion());
+  const targetQuaternion = useRef(new THREE.Quaternion());
+  const rotationProgress = useRef(0);
+  const pointerDownTime = useRef(0);
+  const pointerDownPos = useRef(new THREE.Vector2());
+  const savedPosition = useRef(new THREE.Vector3());
   
   const { camera } = useThree();
   
@@ -264,7 +349,30 @@ function Band() {
       curve.points[3].copy(fixed.current.translation());
     }
     
-    if (dragged) {
+    // Handle smooth rotation animation
+    if (isAnimating) {
+      rotationProgress.current += delta * 3.5;
+      
+      if (rotationProgress.current >= 1) {
+        rotationProgress.current = 1;
+        setIsAnimating(false);
+      }
+      
+      // Smooth interpolation using slerp with easing
+      const t = easeInOutCubic(rotationProgress.current);
+      const interpolatedQuat = new THREE.Quaternion();
+      interpolatedQuat.slerpQuaternions(
+        startQuaternion.current,
+        targetQuaternion.current,
+        t
+      );
+      
+      // Keep position stable during rotation
+      card.current.setNextKinematicTranslation(savedPosition.current);
+      card.current.setNextKinematicRotation(interpolatedQuat);
+    }
+    
+    if (dragged && !isAnimating) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera);
       dir.copy(vec).sub(camera.position).normalize();
       vec.add(dir.multiplyScalar(camera.position.length()));
@@ -279,12 +387,12 @@ function Band() {
       
       const currentPos = new THREE.Vector3(newPos.x, newPos.y, newPos.z);
       velocity.current.subVectors(currentPos, lastPosition.current).divideScalar(delta);
-      lastPosition.current.copy(currentPos);
       
+      lastPosition.current.copy(currentPos);
       card.current?.setNextKinematicTranslation(newPos);
     }
     
-    if (!dragged) {
+    if (!dragged && !isAnimating) {
       const j1Trans = j1.current?.translation();
       const j2Trans = j2.current?.translation();
       const j3Trans = j3.current?.translation();
@@ -294,6 +402,38 @@ function Band() {
       if (j3Trans) j3.current.setTranslation({ x: j3Trans.x, y: j3Trans.y, z: 0 }, false);
     }
   });
+  
+  // Easing function for smooth animation
+  const easeInOutCubic = (t) => {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  };
+  
+  const handleCardFlip = (clickX) => {
+    if (isAnimating) return;
+    
+    // Save current position
+    const currentPos = card.current.translation();
+    savedPosition.current.set(currentPos.x, currentPos.y, currentPos.z);
+    
+    // Get current rotation
+    const currentRot = card.current.rotation();
+    startQuaternion.current.set(currentRot.x, currentRot.y, currentRot.z, currentRot.w);
+    
+    // Calculate target rotation (180 degrees flip based on which side was clicked)
+    const rotationAxis = new THREE.Vector3(0, 1, 0);
+    const rotationAngle = clickX < 0 ? Math.PI : -Math.PI;
+    
+    const additionalRotation = new THREE.Quaternion();
+    additionalRotation.setFromAxisAngle(rotationAxis, rotationAngle);
+    
+    targetQuaternion.current.copy(startQuaternion.current).multiply(additionalRotation);
+    
+    // Start animation
+    rotationProgress.current = 0;
+    setIsAnimating(true);
+    
+    card.current.wakeUp();
+  };
   
   return (
     <>
@@ -315,13 +455,13 @@ function Band() {
       
       <RigidBody
         ref={card}
-        type={dragged ? 'kinematicPosition' : 'dynamic'}
+        type={isAnimating || dragged ? 'kinematicPosition' : 'dynamic'}
         position={[0, 1, 0]}
         colliders={false}
-        lockRotations
-        enabledRotations={[false, false, false]}
+        lockRotations={false}
+        enabledRotations={[false, true, false]}
         linearDamping={0.3}
-        angularDamping={0.3}
+        angularDamping={0.6}
       >
         <CuboidCollider args={[1, 1, 0.01]} />
         
@@ -329,24 +469,19 @@ function Band() {
         <LobsterClaspConnector position={[0, 1.95, 0]} />
         
         <mesh
+          ref={meshRef}
           castShadow
           receiveShadow
-          onPointerOver={() => document.body.style.cursor = 'grab'}
+          onPointerOver={() => !isAnimating && (document.body.style.cursor = 'pointer')}
           onPointerOut={() => document.body.style.cursor = 'default'}
-          onPointerUp={(e) => {
-            e.target.releasePointerCapture(e.pointerId);
-            
-            if (card.current && velocity.current.length() > 0.1) {
-              const impulse = velocity.current.clone().multiplyScalar(0.5);
-              card.current.applyImpulse({ x: impulse.x, y: impulse.y, z: 0 }, true);
-            }
-            
-            drag(false);
-            document.body.style.cursor = 'grab';
-          }}
           onPointerDown={(e) => {
+            if (isAnimating) return;
+            
+            e.stopPropagation();
+            pointerDownTime.current = Date.now();
+            pointerDownPos.current.set(e.clientX, e.clientY);
+            
             e.target.setPointerCapture(e.pointerId);
-            document.body.style.cursor = 'grabbing';
             
             const currentPos = card.current.translation();
             lastPosition.current.set(currentPos.x, currentPos.y, currentPos.z);
@@ -357,6 +492,29 @@ function Band() {
                 .copy(e.point)
                 .sub(vec.copy(currentPos))
             );
+          }}
+          onPointerUp={(e) => {
+            e.target.releasePointerCapture(e.pointerId);
+            
+            const pointerUpTime = Date.now();
+            const timeDiff = pointerUpTime - pointerDownTime.current;
+            
+            const pointerUpPos = new THREE.Vector2(e.clientX, e.clientY);
+            const distance = pointerDownPos.current.distanceTo(pointerUpPos);
+            
+            // If it's a quick click (less than 200ms and less than 10px movement), trigger flip
+            if (timeDiff < 200 && distance < 10) {
+              const cardPos = card.current.translation();
+              const localX = e.point.x - cardPos.x;
+              handleCardFlip(localX);
+            } else if (card.current && velocity.current.length() > 0.1) {
+              // If it was a drag, apply impulse
+              const impulse = velocity.current.clone().multiplyScalar(0.5);
+              card.current.applyImpulse({ x: impulse.x, y: impulse.y, z: 0 }, true);
+            }
+            
+            drag(false);
+            document.body.style.cursor = 'default';
           }}
         >
           <boxGeometry args={[2.5, 3.5, 0.04]} />
@@ -401,16 +559,19 @@ function Band() {
             clearcoatRoughness={0.2}
           />
         </mesh>
+        
+        {/* Back side with tech icons */}
+        <Suspense fallback={null}>
+          <BackOfCard />
+        </Suspense>
       </RigidBody>
     </>
   );
 }
 
-
 function FloatingCard3D() {
   return (
     <>
-      {/* Scroll zones on the sides */}
       <div className="scroll-zone-left"></div>
       <div className="scroll-zone-right"></div>
       
@@ -473,6 +634,5 @@ function FloatingCard3D() {
     </>
   );
 }
-
 
 export default FloatingCard3D;
