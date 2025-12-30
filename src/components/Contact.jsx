@@ -8,11 +8,10 @@ function Contact() {
   const formRef = useRef(null);
 
   useEffect(() => {
-    emailjs.init('YOUR_PUBLIC_KEY'); // ← Replace with your Public Key
+    emailjs.init('jA5CPdKXB_LHrHRKw');
   }, []);
 
   useEffect(() => {
-    // Your animation code (unchanged)
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -37,10 +36,10 @@ function Contact() {
 
     try {
       await emailjs.sendForm(
-        'service_fd8ofoa',    
-        'service_fd8ofoa',  
+        'service_fd8ofoa',     
+        'template_ih9tkj8',    
         formRef.current,
-        'jA5CPdKXB_LHrHRKw'    
+        'jA5CPdKXB_LHrHRKw'   
       );
       setStatus('success');
       formRef.current.reset();
@@ -52,7 +51,6 @@ function Contact() {
     }
   };
 
-  // Your JSX return (UNCHANGED - perfect!)
   return (
     <section id="contact" className="contact">
       <h2>Get In Touch</h2>
