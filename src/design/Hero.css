@@ -4,8 +4,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
-  color: #fff;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
   margin-top: 60px;
   padding: 80px 0;
   width: 100%;
@@ -29,10 +29,10 @@
   animation: fadeInLeft 1s ease-in-out;
 }
 
-/* h1 - STATIC WHITE TEXT (no typing) */
+/* h1 - STATIC TEXT */
 .hero-text h1 {
   font-size: clamp(1.8rem, 5vw + 1rem, 3.5rem);
-  color: #fff;
+  color: var(--text-primary);
   white-space: nowrap;
   font-weight: 700;
   padding-bottom: 20px;
@@ -55,8 +55,7 @@
   margin: 0 0 20px 0;
   vertical-align: top;
   text-align: left !important;
-  filter: drop-shadow(0 4px 8px rgba(67, 51, 51, 0.8)) 
-          drop-shadow(0 2px 4px rgb(121, 31, 31)); 
+  filter: drop-shadow(0 4px 8px rgba(67, 51, 51, 0.8)) drop-shadow(0 2px 4px rgb(121, 31, 31));
 }
 
 .hero-text h2::after {
@@ -66,39 +65,14 @@
   top: 0;
   width: 3px;
   height: 100%;
-  background: #8B0000;
+  background: var(--accent-red);
   animation: blink 0.7s step-end infinite;
 }
-
-
-
-@keyframes typing {
-  0%, 90%, 100% {
-    width: 0;
-  }
-  30%, 60% {
-    width: 100%;
-  }
-}
-
-@keyframes blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-@media (max-width: 768px) {
-  .hero-text h2 {
-    text-align: center !important;
-  }
-}
-
 
 .hero-text p {
   font-size: 1.2rem;
   margin-bottom: 30px;
+  color: var(--text-secondary);
 }
 
 .hero-buttons {
@@ -120,22 +94,22 @@
 }
 
 .btn-primary {
-  background: #000000;
-  color: #fff;
-  border: 2px solid #fff;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
 }
 
 .btn-secondary {
   background: transparent;
-  color: #fff;
-  border: 2px solid #fff;
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
 }
 
 /* Red Hover Effects - Only for devices with hover capability */
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover {
-    background: #8B0000;
-    border-color: #8B0000;
+    background: var(--accent-red);
+    border-color: var(--accent-red);
     color: #fff;
     transform: translateY(-5px) scale(1.05);
     box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6);
@@ -143,8 +117,8 @@
   }
 
   .btn-secondary:hover {
-    background: #8B0000;
-    border-color: #8B0000;
+    background: var(--accent-red);
+    border-color: var(--accent-red);
     color: #fff;
     transform: translateY(-5px) scale(1.05);
     box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6);
@@ -154,8 +128,8 @@
 
 /* Active state for touch devices */
 .btn-primary:active, .btn-secondary:active {
-  background: #8B0000;
-  border-color: #8B0000;
+  background: var(--accent-red);
+  border-color: var(--accent-red);
   transform: scale(0.95);
 }
 
@@ -272,11 +246,30 @@
   }
 }
 
+@keyframes typing {
+  0%, 90%, 100% {
+    width: 0;
+  }
+  30%, 60% {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .hero-text h1 {
     font-size: clamp(1.6rem, 4vw + 1rem, 3rem);
   }
+  
   .hero-container {
     justify-content: center;
     align-items: center;
@@ -288,7 +281,7 @@
     gap: 15px;
     font-size: 0.9rem;
   }
-
+  
   .hero-container {
     flex-direction: column-reverse;
     text-align: center;
@@ -296,52 +289,57 @@
     align-items: center;
     padding: 0 30px;
   }
-
+  
   .hero-text {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers h2 inline-block */
   }
-
+  
   .hero-text h1 {
     font-size: clamp(1.4rem, 6vw + 0.5rem, 2.5rem);
   }
-
-  /* h2 typing effect on mobile */
+  
+  /* h2 typing effect on mobile - CENTERED */
   .hero-text h2 {
     font-size: clamp(1.4rem, 4vw + 1rem, 2.2rem);
     animation: typing 4s steps(18) infinite;
-    text-align: center;
+    text-align: center !important;
+    margin-left: auto;
+    margin-right: auto;
   }
-
+  
   .hero-text p {
     text-align: center;
   }
-
+  
   .hero-buttons {
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-
+  
   .btn-primary, .btn-secondary {
     width: 200px;
     box-sizing: border-box;
   }
-
+  
   .hero-image {
     padding-left: 0;
   }
-
+  
   .hero-image img {
     width: 100%;
     max-width: 300px;
   }
-
+  
   .hero-title {
     text-align: center;
     display: flex;
     justify-content: center;
   }
-
+  
   .skills-grid {
     grid-template-columns: 1fr;
   }
@@ -351,31 +349,32 @@
   .hero-text h1 {
     font-size: clamp(1.2rem, 7vw + 0.5rem, 2rem);
   }
-
-  /* h2 typing effect on small mobile */
+  
+  /* h2 typing effect on small mobile - CENTERED */
   .hero-text h2 {
     font-size: clamp(1.2rem, 5vw + 1rem, 1.8rem);
     animation: typing 3.5s steps(16) infinite;
-    text-align: center;
+    text-align: center !important;
+    margin-left: auto;
+    margin-right: auto;
   }
   
-
   .hero-text p {
     text-align: center;
   }
-
+  
   .hero-container {
     justify-content: center;
     align-items: center;
     padding: 0 20px;
   }
-
+  
   .hero-title {
     text-align: center;
     display: flex;
     justify-content: center;
   }
-
+  
   .btn-primary, .btn-secondary {
     width: 200px;
     box-sizing: border-box;

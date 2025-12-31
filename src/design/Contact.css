@@ -257,4 +257,27 @@
   border-radius: 6px;
   margin-top: 12px;
   font-weight: 500;
+}.contact {
+  background: var(--bg-gradient);
 }
+
+.contact h2, .contact-content p {
+  color: var(--text-primary);
+}
+
+.contact-form input, .contact-form textarea {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.contact-form input::placeholder, .contact-form textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+.contact-icon, .contact-form button {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+

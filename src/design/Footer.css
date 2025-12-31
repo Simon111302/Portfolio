@@ -1,31 +1,73 @@
 /* Footer */
 .footer {
-    background: #000000;
-    color: #fff;
-    padding: 30px 20px;
-    text-align: center;
-  }
-  
-  .footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .social-links {
-    margin-top: 15px;
-    display: flex;
-    gap: 20px;
-    justify-content: center;
+  margin-top: 15px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.social-links a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--text-secondary);
+}
+
+/* Enhanced hover effects with theme support */
+@media (hover: hover) and (pointer: fine) {
+  .social-links a:hover {
+    transform: translateY(-2px) scale(1.1);
+    filter: drop-shadow(0 2px 8px var(--shadow-light));
+  }
+}
+
+/* Active/tap feedback */
+.social-links a:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer {
+    padding: 25px 15px;
+  }
+  
+  .social-links {
+    gap: 15px;
   }
   
   .social-links a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 20px 10px;
   }
   
-  .social-links a:hover {
-    color: #666666;
+  .social-links {
+    gap: 12px;
+    flex-wrap: wrap;
   }
   
+  .social-links a {
+    font-size: 0.9rem;
+  }
+}

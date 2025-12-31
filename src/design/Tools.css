@@ -793,6 +793,15 @@
   }
 }
 
+.skill-name,
+.tools-id,
+h1, h2, h3, h4 {
+  color: var(--text-primary) !important;
+}
+
+.skill-description {
+  color: var(--text-secondary) !important;
+}
 
 /* Extra small screens */
 @media (max-width: 360px) {
@@ -816,4 +825,32 @@
     font-size: 10px;
     padding: 4px 8px;
   }
+}
+/* Replace these patterns throughout Tools.css */
+.skills, .tools, .projects-section {
+  background: var(--bg-gradient) !important;
+}
+
+.skill-card, .project-card, .skill-card-scroll {
+  background: var(--card-bg) !important;
+  border: 2px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.skill-card h3, .project-card h3, h1, h2, h3 {
+  color: var(--text-primary) !important;
+}
+
+.skill-card p, .project-card p, .tools-about-right p {
+  color: var(--text-secondary) !important;
+}
+
+.tech-badge, .level-badge {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.scroll-container {
+  background: linear-gradient(90deg, var(--shadow-light) 0%, transparent 10%, transparent 90%, var(--shadow-light) 100%) !important;
 }

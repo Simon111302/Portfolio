@@ -9,18 +9,16 @@ import Contact from './components/Contact.jsx';
 import Tools from './components/Tools.jsx';
 import Footer from './components/Footer.jsx';
 
-
 function App() {
   return (
     <>
       <Navbar />
       <Hero />
-      <Tools/>
+      <Tools />
       <Contact />
       <Footer />
     </>
   );
 }
-
 
 export default App;
