@@ -1,4 +1,3 @@
-
 :root {
   /* Light Mode (default when data-theme="light") */
   --bg-primary: #ffffff;
@@ -15,7 +14,7 @@
 }
 
 [data-theme="dark"] {
-  /* Dark Mode (overrides light mode) */
+  /* Dark Mode */
   --bg-primary: #000000;
   --bg-secondary: #1a1a1a;
   --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
@@ -29,7 +28,7 @@
   --accent-hover: #910c0c;
 }
 
-/* Global base styles using CSS variables */
+/* SMOOTH SCROLLING - ALL DEVICES */
 * {
   margin: 0;
   padding: 0;
@@ -41,6 +40,7 @@ html {
   scroll-padding-top: 80px;
   overflow-x: hidden;
   max-width: 100%;
+  -webkit-overflow-scrolling: touch; /* ✅ iOS smooth momentum */
 }
 
 body {
@@ -56,11 +56,14 @@ body {
   background: var(--bg-gradient);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none; /* ✅ No iOS bounce */
 }
 
 h1, h2, h3 { color: var(--text-primary); }
 h2 { font-size: 2.5rem; margin-bottom: 30px; text-align: center; }
-/* Full page background travel animation */
+
+/* Theme transition animations */
 html[data-theme="dark"] {
   animation: bgTravelDark 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
@@ -70,30 +73,62 @@ html[data-theme="light"] {
 }
 
 @keyframes bgTravelDark {
-  0% {
-    background: var(--bg-gradient-light); /* start from light */
-    background-size: 400% 400%;
-  }
-  25% { background-position: 100% 0%; }    /* right sweep */
-  50% { background-position: 100% 100%; }  /* down sweep */
-  75% { background-position: 0% 100%; }    /* left sweep */
-  100% {
-    background: var(--bg-gradient); /* end at dark */
-    background-size: 400% 400%;
-  }
+  0% { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); background-size: 400% 400%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+  100% { background: var(--bg-gradient); background-size: 400% 400%; }
 }
 
 @keyframes bgTravelLight {
-  0% {
-    background: var(--bg-gradient); /* start from dark */
-    background-size: 400% 400%;
+  0% { background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); background-size: 400% 400%; }
+  25% { background-position: 0% 0%; }
+  50% { background-position: 100% 0%; }
+  75% { background-position: 100% 100%; }
+  100% { background: var(--bg-gradient); background-size: 400% 400%; }
+}
+
+/* MOBILE SMOOTH SCROLLING */
+@media (max-width: 768px) {
+  html {
+    scroll-padding-top: 70px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
-  25% { background-position: 0% 0%; }      /* up sweep */
-  50% { background-position: 100% 0%; }    /* right sweep */
-  75% { background-position: 100% 100%; }  /* down sweep */
-  100% {
-    background: var(--bg-gradient-light); /* end at light */
-    background-size: 400% 400%;
+  
+  body {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
+/* TABLET */
+@media (min-width: 768px) and (max-width: 1024px) {
+  html {
+    scroll-padding-top: 75px;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* DESKTOP - Custom scrollbar */
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 80px;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent-red);
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+  }
+}
