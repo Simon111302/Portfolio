@@ -10,7 +10,7 @@
   --border-color: #dee2e6;
   --shadow-light: rgba(0, 0, 0, 0.1);
   --shadow-dark: rgba(0, 0, 0, 0.15);
-  --accent-red: #8B0000;
+  --accent-red: #3a3939;
   --accent-hover: #910c0c;
 }
 
@@ -26,7 +26,7 @@
   --border-color: #444444;
   --shadow-light: rgba(0, 0, 0, 0.5);
   --shadow-dark: rgba(0, 0, 0, 0.7);
-  --accent-red: #8B0000;
+  --accent-red: #3a3939;
   --accent-hover: #910c0c;
 }
 
