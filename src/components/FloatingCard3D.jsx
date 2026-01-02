@@ -111,77 +111,20 @@ function BackOfCard() {
   );
 }
 
-// Lobster Clasp
+// Just the Clean Ring Holder (Replace LobsterClaspConnector)
 function LobsterClaspConnector({ position }) {
   return (
     <group position={position}>
-      <mesh castShadow rotation={[0, 0, 0]}>
-        <capsuleGeometry args={[0.04, 0.15, 16, 32]} />
-        <meshPhysicalMaterial 
-          color="#4a4a4a" 
-          metalness={0.98} 
-          roughness={0.08}
-          clearcoat={1.0}
-          clearcoatRoughness={0.1}
-          ior={1.5}
-        />
-      </mesh>
-      
-      <mesh castShadow position={[0.035, 0.05, 0]} rotation={[0, 0, -0.3]}>
-        <boxGeometry args={[0.025, 0.08, 0.02]} />
-        <meshPhysicalMaterial 
-          color="#3a3a3a" 
-          metalness={0.95} 
-          roughness={0.12}
-          clearcoat={1.0}
-          clearcoatRoughness={0.08}
-        />
-      </mesh>
-      
-      <mesh castShadow position={[0.04, 0, 0]}>
-        <cylinderGeometry args={[0.01, 0.01, 0.06, 16]} />
-        <meshPhysicalMaterial 
-          color="#5a5a5a" 
-          metalness={0.85} 
-          roughness={0.25}
-          clearcoat={0.9}
-          clearcoatRoughness={0.15}
-        />
-      </mesh>
-      
-      <mesh castShadow position={[0, 0.12, 0]}>
-        <torusGeometry args={[0.045, 0.015, 16, 32]} />
+      {/* Perfect clean ring only */}
+      <mesh castShadow>
+        <torusGeometry args={[0.038, 0.008, 12, 24]} />
         <meshPhysicalMaterial 
           color="#3a3a3a" 
           metalness={0.98} 
-          roughness={0.1}
+          roughness={0.05}
           clearcoat={1.0}
-          clearcoatRoughness={0.08}
+          clearcoatRoughness={0.02}
           ior={1.5}
-        />
-      </mesh>
-      
-      <group position={[0, -0.08, 0]}>
-        <mesh castShadow rotation={[0, 0, Math.PI]}>
-          <torusGeometry args={[0.03, 0.01, 16, 32, Math.PI]} />
-          <meshPhysicalMaterial 
-            color="#4a4a4a" 
-            metalness={0.98} 
-            roughness={0.1}
-            clearcoat={1.0}
-            clearcoatRoughness={0.08}
-          />
-        </mesh>
-      </group>
-      
-      <mesh castShadow position={[0.045, 0.02, 0]}>
-        <boxGeometry args={[0.02, 0.04, 0.035]} />
-        <meshPhysicalMaterial 
-          color="#5a5a5a" 
-          metalness={0.9} 
-          roughness={0.18}
-          clearcoat={0.95}
-          clearcoatRoughness={0.12}
         />
       </mesh>
     </group>
@@ -207,88 +150,27 @@ function CardRing({ position }) {
   );
 }
 
-// Fabric Strap
+// Dark Red + Wider Strap (Perfect Match)
 function FabricStrap({ curve }) {
   const strapRef = useRef();
-  
-  const createFabricTexture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 2048;
-    const ctx = canvas.getContext('2d');
-    
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, '#ff0000');
-    gradient.addColorStop(0.5, '#330000');
-    gradient.addColorStop(1, '#000000');
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    const weaveSize = 8;
-    for (let y = 0; y < canvas.height; y += weaveSize) {
-      for (let x = 0; x < canvas.width; x += weaveSize) {
-        const brightness = (x + y) % (weaveSize * 2) < weaveSize ? 20 : 35;
-        ctx.fillStyle = `rgba(${brightness}, ${brightness}, ${brightness}, 0.3)`;
-        ctx.fillRect(x, y, weaveSize, weaveSize);
-      }
-    }
-    
-    const stripeWidth = 60;
-    const stripeSpacing = 120;
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 2;
-    for (let x = stripeWidth; x < canvas.width; x += stripeSpacing) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, canvas.height);
-      ctx.stroke();
-    }
-    
-    ctx.strokeStyle = 'rgba(255, 0, 0, 0.15)';
-    ctx.lineWidth = 1;
-    for (let i = -canvas.height; i < canvas.width + canvas.height; i += 40) {
-      ctx.beginPath();
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i + canvas.height, canvas.height);
-      ctx.stroke();
-    }
-    
-    ctx.strokeStyle = 'rgba(50, 0, 0, 0.8)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(4, 0);
-    ctx.lineTo(4, canvas.height);
-    ctx.moveTo(canvas.width - 4, 0);
-    ctx.lineTo(canvas.width - 4, canvas.height);
-    ctx.stroke();
-    
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(-3, 1);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    return texture;
-  };
-  
-  const [fabricTexture] = useState(() => createFabricTexture());
   const { width, height } = useThree((state) => state.size);
   
   useFrame(() => {
-    if (!strapRef.current || !strapRef.current.geometry) return;
-    strapRef.current.geometry.setPoints(curve.getPoints(32));
+    if (!strapRef.current?.geometry) return;
+    strapRef.current.geometry.setPoints(curve.getPoints(40));
+    strapRef.current.geometry.needsUpdate = true;
   });
   
   return (
-    <mesh ref={strapRef} castShadow receiveShadow>
+    <mesh ref={strapRef} castShadow>
       <meshLineGeometry />
       <meshLineMaterial
-        color="#ffffff"
-        useMap
-        map={fabricTexture}
-        depthTest={false}
+        color="#660000"        // Dark rich red
+        transparent
+        opacity={0.94}
         resolution={[width, height]}
-        lineWidth={0.4}
+        lineWidth={0.22}      // Wider (doubled from 0.12)
+        depthTest={false}
       />
     </mesh>
   );
@@ -331,47 +213,49 @@ function Band() {
   useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 0.6]);
   useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.95, 0]]);
   
-  useFrame((state, delta) => {
-    if (!card.current) return;
-    
-    if (fixed.current) {
-      curve.points[0].copy(j3.current.translation());
-      curve.points[1].copy(j2.current.translation());
-      curve.points[2].copy(j1.current.translation());
-      curve.points[3].copy(fixed.current.translation());
-    }
-    
-    if (dragged) {
-      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera);
-      dir.copy(vec).sub(camera.position).normalize();
-      vec.add(dir.multiplyScalar(camera.position.length()));
-      
-      [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
-      
-      const newPos = {
-        x: vec.x - dragged.x,
-        y: vec.y - dragged.y,
-        z: 0
-      };
-      
-      const currentPos = new THREE.Vector3(newPos.x, newPos.y, newPos.z);
-      velocity.current.subVectors(currentPos, lastPosition.current).divideScalar(delta);
-      
-      lastPosition.current.copy(currentPos);
-      card.current?.setNextKinematicTranslation(newPos);
-    }
-    
-    if (!dragged) {
-      const j1Trans = j1.current?.translation();
-      const j2Trans = j2.current?.translation();
-      const j3Trans = j3.current?.translation();
-      
-      if (j1Trans) j1.current.setTranslation({ x: j1Trans.x, y: j1Trans.y, z: 0 }, false);
-      if (j2Trans) j2.current.setTranslation({ x: j2Trans.x, y: j2Trans.y, z: 0 }, false);
-      if (j3Trans) j3.current.setTranslation({ x: j3Trans.x, y: j3Trans.y, z: 0 }, false);
-    }
-  });
+// Stable Strap (Less Shakey) - Update Band() useFrame only
+useFrame((state, delta) => {
+  if (!card.current) return;
   
+  if (fixed.current) {
+    curve.points[0].copy(j3.current.translation());
+    curve.points[1].copy(j2.current.translation());
+    curve.points[2].copy(j1.current.translation());
+    curve.points[3].copy(fixed.current.translation());
+  }
+  
+  if (dragged) {
+    vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera);
+    dir.copy(vec).sub(camera.position).normalize();
+    vec.add(dir.multiplyScalar(camera.position.length()));
+    
+    [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
+    
+    const newPos = {
+      x: vec.x - dragged.x,
+      y: vec.y - dragged.y,
+      z: 0
+    };
+    
+    const currentPos = new THREE.Vector3(newPos.x, newPos.y, newPos.z);
+    velocity.current.subVectors(currentPos, lastPosition.current).divideScalar(delta);
+    
+    lastPosition.current.copy(currentPos);
+    card.current?.setNextKinematicTranslation(newPos);
+  }
+  
+  if (!dragged) {
+    const j1Trans = j1.current?.translation();
+    const j2Trans = j2.current?.translation();
+    const j3Trans = j3.current?.translation();
+    
+    // HIGHER DAMPING = LESS SHAKEY
+    if (j1Trans) j1.current.setTranslation({ x: j1Trans.x, y: j1Trans.y, z: 0 }, false);
+    if (j2Trans) j2.current.setTranslation({ x: j2Trans.x, y: j2Trans.y, z: 0 }, false);
+    if (j3Trans) j3.current.setTranslation({ x: j3Trans.x, y: j3Trans.y, z: 0 }, false);
+  }
+});
+
   // Handle card poke - spin based on left/right side (NO bounce, just spin)
   const handleCardPoke = (pokeX) => {
     // Apply rotational impulse based on where the card was poked
