@@ -380,3 +380,15 @@
     box-sizing: border-box;
   }
 }
+/* Light Mode - Black text with red outline */
+[data-theme="light"] .hero-text h2,
+html.light .hero-text h2 {
+  background: transparent;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #000000;
+  background-clip: unset;
+  color: #000000;
+  -webkit-text-stroke: 2px #fa0000; /* Red outline */
+  text-stroke: 2px #fa0000;
+  filter: drop-shadow(0 2px 4px rgba(250, 0, 0, 0.3));
+}

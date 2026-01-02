@@ -239,6 +239,7 @@
     transform: translateY(0);
   }
 }
+
 .success-message {
   background: rgba(0, 255, 0, 0.1);
   border: 1px solid rgba(0, 255, 0, 0.3);
@@ -257,27 +258,74 @@
   border-radius: 6px;
   margin-top: 12px;
   font-weight: 500;
-}.contact {
+}
+
+/* Dark Mode - Use data-theme attribute */
+html[data-theme="dark"] .contact {
   background: var(--bg-gradient);
 }
 
-.contact h2, .contact-content p {
+html[data-theme="dark"] .contact h2, 
+html[data-theme="dark"] .contact-content p {
   color: var(--text-primary);
 }
 
-.contact-form input, .contact-form textarea {
+html[data-theme="dark"] .contact-form input, 
+html[data-theme="dark"] .contact-form textarea {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+}
+
+html[data-theme="dark"] .contact-form input::placeholder, 
+html[data-theme="dark"] .contact-form textarea::placeholder {
+  color: #888 !important;
+}
+
+html[data-theme="dark"] .contact-form input:focus,
+html[data-theme="dark"] .contact-form textarea:focus {
+  background: #222 !important;
+  color: #ffffff !important;
+  border-color: #8B0000 !important;
+  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.25) !important;
+}
+
+html[data-theme="dark"] .contact-icon, 
+html[data-theme="dark"] .contact-form button {
   background: var(--card-bg);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
 
-.contact-form input::placeholder, .contact-form textarea::placeholder {
-  color: var(--text-secondary);
+/* Light Mode - Use data-theme attribute */
+html[data-theme="light"] .contact {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%) !important;
 }
 
-.contact-icon, .contact-form button {
-  background: var(--card-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+html[data-theme="light"] .contact h2 {
+  color: #000000 !important;
 }
 
+html[data-theme="light"] .contact-content > p {
+  color: #333333 !important;
+}
+
+html[data-theme="light"] .contact-form input,
+html[data-theme="light"] .contact-form textarea {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #d1d1d1 !important;
+}
+
+html[data-theme="light"] .contact-form input::placeholder,
+html[data-theme="light"] .contact-form textarea::placeholder {
+  color: #999999 !important;
+}
+
+html[data-theme="light"] .contact-form input:focus,
+html[data-theme="light"] .contact-form textarea:focus {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: #8B0000 !important;
+  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.15) !important;
+}

@@ -1,3 +1,4 @@
+
 :root {
   /* Light Mode (default when data-theme="light") */
   --bg-primary: #ffffff;
@@ -43,6 +44,8 @@ html {
 }
 
 body {
+  position: relative !important;
+  z-index: 1 !important;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -57,3 +60,40 @@ body {
 
 h1, h2, h3 { color: var(--text-primary); }
 h2 { font-size: 2.5rem; margin-bottom: 30px; text-align: center; }
+/* Full page background travel animation */
+html[data-theme="dark"] {
+  animation: bgTravelDark 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-theme="light"] {
+  animation: bgTravelLight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes bgTravelDark {
+  0% {
+    background: var(--bg-gradient-light); /* start from light */
+    background-size: 400% 400%;
+  }
+  25% { background-position: 100% 0%; }    /* right sweep */
+  50% { background-position: 100% 100%; }  /* down sweep */
+  75% { background-position: 0% 100%; }    /* left sweep */
+  100% {
+    background: var(--bg-gradient); /* end at dark */
+    background-size: 400% 400%;
+  }
+}
+
+@keyframes bgTravelLight {
+  0% {
+    background: var(--bg-gradient); /* start from dark */
+    background-size: 400% 400%;
+  }
+  25% { background-position: 0% 0%; }      /* up sweep */
+  50% { background-position: 100% 0%; }    /* right sweep */
+  75% { background-position: 100% 100%; }  /* down sweep */
+  100% {
+    background: var(--bg-gradient-light); /* end at light */
+    background-size: 400% 400%;
+  }
+}
+

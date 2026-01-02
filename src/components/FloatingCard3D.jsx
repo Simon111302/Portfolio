@@ -38,8 +38,6 @@ function ProfileImage({ imagePath }) {
 }
 
 // Back of Card with Tech Icons
-// Back of Card with Tech Icons in Circular Arrangement
-// Back of Card with Tech Icons in Circular Arrangement
 function BackOfCard() {
   const [reactTex, csharpTex, phpTex, pythonTex, cppTex] = useTexture([
     reactIcon,
@@ -309,17 +307,11 @@ function Band() {
   const dir = new THREE.Vector3();
   
   const [dragged, drag] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
   const lastPosition = useRef(new THREE.Vector3());
   const velocity = useRef(new THREE.Vector3());
   
-  // Smooth rotation state
-  const startQuaternion = useRef(new THREE.Quaternion());
-  const targetQuaternion = useRef(new THREE.Quaternion());
-  const rotationProgress = useRef(0);
   const pointerDownTime = useRef(0);
   const pointerDownPos = useRef(new THREE.Vector2());
-  const savedPosition = useRef(new THREE.Vector3());
   
   const { camera } = useThree();
   
@@ -349,30 +341,7 @@ function Band() {
       curve.points[3].copy(fixed.current.translation());
     }
     
-    // Handle smooth rotation animation
-    if (isAnimating) {
-      rotationProgress.current += delta * 3.5;
-      
-      if (rotationProgress.current >= 1) {
-        rotationProgress.current = 1;
-        setIsAnimating(false);
-      }
-      
-      // Smooth interpolation using slerp with easing
-      const t = easeInOutCubic(rotationProgress.current);
-      const interpolatedQuat = new THREE.Quaternion();
-      interpolatedQuat.slerpQuaternions(
-        startQuaternion.current,
-        targetQuaternion.current,
-        t
-      );
-      
-      // Keep position stable during rotation
-      card.current.setNextKinematicTranslation(savedPosition.current);
-      card.current.setNextKinematicRotation(interpolatedQuat);
-    }
-    
-    if (dragged && !isAnimating) {
+    if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(camera);
       dir.copy(vec).sub(camera.position).normalize();
       vec.add(dir.multiplyScalar(camera.position.length()));
@@ -392,7 +361,7 @@ function Band() {
       card.current?.setNextKinematicTranslation(newPos);
     }
     
-    if (!dragged && !isAnimating) {
+    if (!dragged) {
       const j1Trans = j1.current?.translation();
       const j2Trans = j2.current?.translation();
       const j3Trans = j3.current?.translation();
@@ -403,35 +372,17 @@ function Band() {
     }
   });
   
-  // Easing function for smooth animation
-  const easeInOutCubic = (t) => {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  };
-  
-  const handleCardFlip = (clickX) => {
-    if (isAnimating) return;
+  // Handle card poke - spin based on left/right side (NO bounce, just spin)
+  const handleCardPoke = (pokeX) => {
+    // Apply rotational impulse based on where the card was poked
+    const torqueStrength = 3.5;
+    const torque = {
+      x: 0,
+      y: pokeX < 0 ? -torqueStrength : torqueStrength, // Spin around Y axis based on left/right
+      z: 0
+    };
     
-    // Save current position
-    const currentPos = card.current.translation();
-    savedPosition.current.set(currentPos.x, currentPos.y, currentPos.z);
-    
-    // Get current rotation
-    const currentRot = card.current.rotation();
-    startQuaternion.current.set(currentRot.x, currentRot.y, currentRot.z, currentRot.w);
-    
-    // Calculate target rotation (180 degrees flip based on which side was clicked)
-    const rotationAxis = new THREE.Vector3(0, 1, 0);
-    const rotationAngle = clickX < 0 ? Math.PI : -Math.PI;
-    
-    const additionalRotation = new THREE.Quaternion();
-    additionalRotation.setFromAxisAngle(rotationAxis, rotationAngle);
-    
-    targetQuaternion.current.copy(startQuaternion.current).multiply(additionalRotation);
-    
-    // Start animation
-    rotationProgress.current = 0;
-    setIsAnimating(true);
-    
+    card.current.applyTorqueImpulse(torque, true);
     card.current.wakeUp();
   };
   
@@ -455,11 +406,11 @@ function Band() {
       
       <RigidBody
         ref={card}
-        type={isAnimating || dragged ? 'kinematicPosition' : 'dynamic'}
+        type={dragged ? 'kinematicPosition' : 'dynamic'}
         position={[0, 1, 0]}
         colliders={false}
         lockRotations={false}
-        enabledRotations={[false, true, false]}
+        enabledRotations={[true, true, true]} // Enable all 360° rotations
         linearDamping={0.3}
         angularDamping={0.6}
       >
@@ -472,11 +423,9 @@ function Band() {
           ref={meshRef}
           castShadow
           receiveShadow
-          onPointerOver={() => !isAnimating && (document.body.style.cursor = 'pointer')}
-          onPointerOut={() => document.body.style.cursor = 'default'}
+          onPointerOver={() => (document.body.style.cursor = 'pointer')}
+          onPointerOut={() => (document.body.style.cursor = 'default')}
           onPointerDown={(e) => {
-            if (isAnimating) return;
-            
             e.stopPropagation();
             pointerDownTime.current = Date.now();
             pointerDownPos.current.set(e.clientX, e.clientY);
@@ -502,15 +451,23 @@ function Band() {
             const pointerUpPos = new THREE.Vector2(e.clientX, e.clientY);
             const distance = pointerDownPos.current.distanceTo(pointerUpPos);
             
-            // If it's a quick click (less than 200ms and less than 10px movement), trigger flip
+            // If it's a quick click (poke), trigger spin
             if (timeDiff < 200 && distance < 10) {
               const cardPos = card.current.translation();
-              const localX = e.point.x - cardPos.x;
-              handleCardFlip(localX);
+              const localX = e.point.x - cardPos.x; // Get relative X position on card
+              handleCardPoke(localX);
             } else if (card.current && velocity.current.length() > 0.1) {
-              // If it was a drag, apply impulse
+              // If it was a drag, apply impulse for swing effect
               const impulse = velocity.current.clone().multiplyScalar(0.5);
               card.current.applyImpulse({ x: impulse.x, y: impulse.y, z: 0 }, true);
+              
+              // Add rotational impulse for 360° swing
+              const torque = {
+                x: (Math.random() - 0.5) * 0.2,
+                y: (Math.random() - 0.5) * 0.2,
+                z: (Math.random() - 0.5) * 0.2
+              };
+              card.current.applyTorqueImpulse(torque, true);
             }
             
             drag(false);
@@ -529,6 +486,33 @@ function Band() {
             transmission={0}
           />
         </mesh>
+        
+        {/* Red Border Frame around the card */}
+        <group position={[0, 0, 0.022]}>
+          {/* Top border */}
+          <mesh position={[0, 1.75, 0]}>
+            <boxGeometry args={[2.5, 0.05, 0.01]} />
+            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.3} />
+          </mesh>
+          
+          {/* Bottom border */}
+          <mesh position={[0, -1.75, 0]}>
+            <boxGeometry args={[2.5, 0.05, 0.01]} />
+            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.3} />
+          </mesh>
+          
+          {/* Left border */}
+          <mesh position={[-1.25, 0, 0]}>
+            <boxGeometry args={[0.05, 3.5, 0.01]} />
+            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.3} />
+          </mesh>
+          
+          {/* Right border */}
+          <mesh position={[1.25, 0, 0]}>
+            <boxGeometry args={[0.05, 3.5, 0.01]} />
+            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.3} />
+          </mesh>
+        </group>
         
         <Suspense fallback={null}>
           <ProfileImage imagePath={profileImage} />
