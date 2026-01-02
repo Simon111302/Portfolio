@@ -4,7 +4,6 @@ import weatherImg from '../assets/weather.png';
 import ChatBot from '../assets/chatbot.png';
 import movieImg from '../assets/movie.png';
 
-
 // Import your tech icons
 import cIcon from '../../img/c-.png';
 import csharpIcon from '../../img/c-sharp.png';
@@ -19,7 +18,6 @@ import mongoIcon from '../../img/mongodb.png';
 import sqlIcon from '../../img/ssms.png';
 import phpIcon from '../../img/php.png';
 import logo from '../../img/logo.png';
-
 
 function Tools() {
   const allSkills = [
@@ -83,34 +81,31 @@ function Tools() {
     }
   ];
 
-
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         const cards = entry.target.querySelectorAll('.skill-card, .project-card');
         
         if (entry.isIntersecting) {
-          cards.forEach((card, index) => {
-            setTimeout(() => {
-              card.classList.add('animate-in');
-            }, index * 100);
-          });
-          // Disconnect observer after animation triggers once
-          observer.unobserve(entry.target);
+         cards.forEach((card, index) => {
+           setTimeout(() => {
+             card.classList.add('animate-in');
+           }, index * 100);
+         });
+         observer.unobserve(entry.target);
         }
       });
     }, {
       threshold: 0.2
     });
-  
+    
     const toolsSection = document.querySelector('#tools');
     if (toolsSection) {
       observer.observe(toolsSection);
     }
-  
+    
     return () => observer.disconnect();
   }, []);
-  
 
   const renderScrollingSection = (items, title) => (
     <div className="tools-category">
@@ -124,7 +119,7 @@ function Tools() {
               <h4>{item.name}</h4>
             </div>
           ))}
-          {/* Duplicate set for seamless loop */}
+          {/* DUPLICATE SET - ELIMINATES LAG/STUTTER */}
           {items.map((item, index) => (
             <div key={`${title}-2-${index}`} className="skill-card-scroll">
               {item.icon && <img src={item.icon} alt={item.name} />}
@@ -136,25 +131,24 @@ function Tools() {
     </div>
   );
 
-
   return (
     <section id="tools" className="tools">
       <h2>About</h2>
       <div className="tools-about-container">
         <div className="tools-about-left">
-          <div className="tools-id-section">
-            <div className="tools-3d-container">
-              <Suspense fallback={<div style={{ color: '#fff', fontSize: '2rem', textAlign: 'center', padding: '50px' }}>Loading...</div>}>
-                <FloatingCard3D />
-              </Suspense>
-            </div>
-          </div>
+         <div className="tools-id-section">
+           <div className="tools-3d-container">
+             <Suspense fallback={<div style={{ color: '#fff', fontSize: '2rem', textAlign: 'center', padding: '50px' }}>Loading...</div>}>
+               <FloatingCard3D />
+             </Suspense>
+           </div>
+         </div>
         </div>
         <div className="tools-about-right">
-          <h3>About Me</h3>
-          <p>
-            I'm a student developer passionate about building web applications using modern technologies. I'm eager to learn more about software development and continuously grow as a developer. I'm a passionate student developer dedicated to building innovative web applications using modern technologies. I'm committed to continuous learning and professional growth in the field of software development. My journey is driven by curiosity, a love for problem-solving, and the desire to create meaningful digital solutions that make an impact.
-          </p>
+         <h3>About Me</h3>
+         <p>
+           I'm a student developer passionate about building web applications using modern technologies. I'm eager to learn more about software development and continuously grow as a developer. I'm a passionate student developer dedicated to building innovative web applications using modern technologies. I'm committed to continuous learning and professional growth in the field of software development. My journey is driven by curiosity, a love for problem-solving, and the desire to create meaningful digital solutions that make an impact.
+         </p>
         </div>
       </div>
       <div className="tech-stack-section">
@@ -166,26 +160,25 @@ function Tools() {
       <div id="projects" className="projects-section">
         <h2>My Projects</h2>
         <div className="projects-grid">
-          {projects.map((project) => (
-            <div key={project.id} className="project-card">
-              <img src={project.image} alt={project.title} />
-              <h3>{project.title}</h3>
-              <p>{project.description}</p>
-              <div className="tech-stack">
-                {project.technologies.map((tech, index) => (
-                  <span key={index} className="tech-badge">{tech}</span>
-                ))}
-              </div>
-              <div className="project-links">
-                <a href={project.liveLink} target="_blank" rel="noopener noreferrer">Live Demo</a>
-              </div>
-            </div>
-          ))}
+         {projects.map((project) => (
+           <div key={project.id} className="project-card">
+             <img src={project.image} alt={project.title} />
+             <h3>{project.title}</h3>
+             <p>{project.description}</p>
+             <div className="tech-stack">
+               {project.technologies.map((tech, index) => (
+                 <span key={index} className="tech-badge">{tech}</span>
+               ))}
+             </div>
+             <div className="project-links">
+               <a href={project.liveLink} target="_blank" rel="noopener noreferrer">Live Demo</a>
+             </div>
+           </div>
+         ))}
         </div>
       </div>
     </section>
   );
 }
-
 
 export default Tools;

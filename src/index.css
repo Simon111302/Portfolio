@@ -15,7 +15,6 @@
 }
 
 [data-theme="dark"] {
-  /* Dark Mode - SMOOTH SCROLL ENABLED */
   --bg-primary: #000000;
   --bg-secondary: #1a1a1a;
   --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
