@@ -8,7 +8,7 @@
   pointer-events: none;
   padding-right: 140px; /* Desktop right padding */
   display: flex;
-  justify-content: flex-end; /* Aligns card to right on desktop */
+  justify-content: flex-end; /* Right-aligned on desktop */
   align-items: center;
 }
 
@@ -16,18 +16,22 @@
   width: 100% !important;
   height: 100% !important;
   display: block;
-  touch-action: pan-y; /* Disable scroll only on canvas */
-  pointer-events: auto; /* Canvas intercepts interactions */
+  touch-action: pan-y;
+  pointer-events: auto;
 }
 
-/* Mobile optimizations */
+/* MOBILE - PERFECT CENTER ALIGNMENT */
 @media (max-width: 768px) {
   .floating-card-3d-container {
     height: 60vh;
     min-height: 400px;
-    padding-right: 0 !important;      /* Remove padding */
-    justify-content: center !important; /* CENTER card */
-    padding: 0 20px;                   /* Even side padding */
+    padding-right: 0 !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
   }
 }
 
@@ -35,7 +39,7 @@
 @media (min-width: 768px) and (max-width: 1024px) {
   .floating-card-3d-container {
     height: 70vh;
-    padding-right: 80px; /* Reduced padding */
+    padding-right: 80px;
     justify-content: flex-end;
   }
 }
@@ -45,25 +49,31 @@
   .floating-card-3d-container {
     height: 55vh;
     min-height: 350px;
-    padding: 0 16px;
+    padding: 0 !important;
   }
 }
-/* Prevent text selection on 3D elements */
+
+/* Prevent text selection */
 .floating-card-3d-container * {
   -webkit-user-select: none;
   user-select: none;
 }
 
+/* ID Card Container - PERFECT CENTERING */
 .id-card-container {
   position: relative;
-  display: inline-block;
-  padding-top: 150px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding-top: 0 !important; /* No top padding for true center */
 }
 
-/* Fabric lanyard strap */
+/* Fabric lanyard strap - Positioned above centered card */
 .lanyard-sling {
   position: absolute;
-  top: 0;
+  top: -130px; /* Above the card */
   left: 50%;
   transform: translateX(-50%);
   width: 20px;
@@ -111,7 +121,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Add text branding on lanyard */
+/* Lanyard text branding */
 .lanyard-text {
   position: absolute;
   top: 15px;
@@ -127,7 +137,7 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* ID Card */
+/* ID Card - Centered with fallback */
 .id-card {
   width: 300px;
   height: 420px;
@@ -137,9 +147,10 @@
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
   overflow: hidden;
   position: relative;
+  margin: 0 auto !important; /* Perfect fallback centering */
 }
 
-/* Card hole where sling attaches */
+/* Card hole */
 .card-hole {
   position: absolute;
   top: 10px;
@@ -153,4 +164,33 @@
     inset 0 2px 4px rgba(0, 0, 0, 0.8),
     0 1px 2px rgba(255, 255, 255, 0.1);
   z-index: 10;
+}
+
+/* Mobile card sizing */
+@media (max-width: 768px) {
+  .id-card {
+    width: 280px;
+    height: 390px;
+  }
+  
+  .lanyard-sling {
+    top: -120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .id-card {
+    width: 260px;
+    height: 370px;
+  }
+  
+  .lanyard-sling {
+    top: -110px;
+    width: 18px;
+    height: 120px;
+  }
+  
+  .lanyard-text {
+    font-size: 7px;
+  }
 }
