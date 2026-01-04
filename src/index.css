@@ -28,7 +28,13 @@
   --accent-red: #3a3939;
   --accent-hover: #910c0c;
 }
-
+/* ADD THIS - React root container fix */
+#root {
+  position: static !important;
+  overflow-x: hidden;
+  overflow-y: visible;
+  min-height: 100vh;
+}
 /* COMPLETE SMOOTH SCROLLING SYSTEM */
 * {
   margin: 0;
@@ -41,26 +47,24 @@ html {
   scroll-padding-top: 80px;
   overflow-x: hidden;
   max-width: 100%;
-  -webkit-overflow-scrolling: touch; /* iOS momentum */
-  will-change: scroll-position; /* GPU acceleration */
+  position: static !important;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
 }
 
 body {
-  position: relative !important;
-  z-index: 1 !important;
   margin: 0;
   padding: 0;
   width: 100%;
   overflow-x: hidden;
   max-width: 100%;
-  position: relative;
   scroll-behavior: smooth !important;
   background: var(--bg-gradient) !important;
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: none; /* No bounce */
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  overscroll-behavior-y: none;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3 { 
@@ -70,45 +74,6 @@ h2 {
   font-size: 2.5rem; 
   margin-bottom: 30px; 
   text-align: center; 
-}
-
-/* DARK/LIGHT MODE SMOOTH ANIMATIONS */
-html[data-theme="dark"] {
-  animation: bgTravelDark 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  scroll-behavior: smooth !important;
-}
-
-html[data-theme="light"] {
-  animation: bgTravelLight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  scroll-behavior: smooth !important;
-}
-
-@keyframes bgTravelDark {
-  0% {
-    background: var(--bg-gradient-light) !important;
-    background-size: 400% 400%;
-  }
-  25% { background-position: 100% 0%; }
-  50% { background-position: 100% 100%; }
-  75% { background-position: 0% 100%; }
-  100% {
-    background: var(--bg-gradient) !important;
-    background-size: 400% 400%;
-  }
-}
-
-@keyframes bgTravelLight {
-  0% {
-    background: var(--bg-gradient) !important;
-    background-size: 400% 400%;
-  }
-  25% { background-position: 0% 0%; }
-  50% { background-position: 100% 0%; }
-  75% { background-position: 100% 100%; }
-  100% {
-    background: var(--bg-gradient-light) !important;
-    background-size: 400% 400%;
-  }
 }
 
 /* MOBILE - PERFECT SMOOTH SCROLL */
@@ -121,7 +86,7 @@ html[data-theme="light"] {
   
   body {
     -webkit-overflow-scrolling: touch;
-    transform: translateZ(0); /* Hardware acceleration */
+    transform: translateZ(0);
   }
 }
 
