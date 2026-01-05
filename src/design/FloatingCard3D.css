@@ -57,11 +57,11 @@
 /* Fabric lanyard strap - EXTRA SMALL */
 .lanyard-sling {
   position: absolute;
-  top: -40px !important; /* Shorter */
+  top: -40px !important;
   left: 50%;
   transform: translateX(-50%);
-  width: 10px !important; /* Thinner */
-  height: 40px !important; /* Shorter */
+  width: 10px !important; 
+  height: 40px !important; 
   background: linear-gradient(to right, 
     #0a0a0a 0%,
     #1a1a1a 10%,

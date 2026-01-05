@@ -1,48 +1,31 @@
 /* Hero Section */
 .hero {
-  min-height: 110vh;
+  width: 100%;
+  margin: 0;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+
+  /* ✅ Fix: don’t over-pad on big screens */
+  /* small on desktop, larger on mobile */
+  padding-top: clamp(20px, 6vh, 80px);
+  padding-bottom: 80px;
+
+  /* ✅ Fix: avoid “extra empty space” */
+  min-height: 100vh;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-gradient);
-  color: var(--text-primary);
-  margin-top: 0;
-  padding: 80px 0;
-  padding-top: 1px;
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
 }
 
-
-/* Tablet specific */
-@media (max-width: 1024px) {
-  .hero {
-    padding-top: 80px; 
-    min-height: 100vh; 
-  }
-}
-
-@media (max-width: 768px) {
-  .hero {
-    padding-top: 75px;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero {
-    padding-top: 70px;
-  }
-}
-
-
+/* Layout */
 .hero-container {
   max-width: 1200px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 5px;
+  gap: 12px;
   padding: 0 20px;
 }
 
@@ -62,25 +45,31 @@
   margin: 0;
 }
 
+/* Typing headline */
 .hero-text h2 {
   background: linear-gradient(135deg, #fa0000 0%, #fb0101 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+
   font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
   white-space: nowrap;
   overflow: hidden;
   display: inline-block;
   position: relative;
-  max-width: max-content; /* Fixed responsive typing */
+
+  max-width: max-content;
   width: 0;
   animation: typing 4s steps(18) infinite;
+
   font-weight: 700;
   margin: 0 0 20px 0;
   vertical-align: top;
   text-align: left !important;
-  filter: drop-shadow(0 4px 8px rgba(67, 51, 51, 0.8)) drop-shadow(0 2px 4px rgb(121, 31, 31));
-  paint-order: stroke fill; /* Ensures proper stroke rendering */
+
+  filter: drop-shadow(0 4px 8px rgba(67, 51, 51, 0.8))
+    drop-shadow(0 2px 4px rgb(121, 31, 31));
+  paint-order: stroke fill;
 }
 
 .hero-text h2::after {
@@ -100,12 +89,14 @@
   color: var(--text-secondary);
 }
 
+/* Buttons */
 .hero-buttons {
   display: flex;
   gap: 20px;
 }
 
-.btn-primary, .btn-secondary {
+.btn-primary,
+.btn-secondary {
   padding: 12px 30px;
   font-size: 1rem;
   border-radius: 5px;
@@ -130,17 +121,9 @@
   border: 2px solid var(--text-primary);
 }
 
-/* Red Hover Effects - Only for devices with hover capability */
+/* Hover only on devices that support hover */
 @media (hover: hover) and (pointer: fine) {
-  .btn-primary:hover {
-    background: var(--accent-red);
-    border-color: var(--accent-red);
-    color: #fff;
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6);
-    animation: redGlow 1.5s ease-in-out infinite;
-  }
-
+  .btn-primary:hover,
   .btn-secondary:hover {
     background: var(--accent-red);
     border-color: var(--accent-red);
@@ -151,24 +134,17 @@
   }
 }
 
-/* Active state for touch devices */
-.btn-primary:active, .btn-secondary:active {
+/* Active state for touch */
+.btn-primary:active,
+.btn-secondary:active {
   background: var(--accent-red);
   border-color: var(--accent-red);
   transform: scale(0.95);
 }
 
-@keyframes redGlow {
-  0%, 100% {
-    box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6);
-  }
-  50% {
-    box-shadow: 0 8px 35px rgba(139, 0, 0, 0.9);
-  }
-}
-
-/* Ripple Effect on Click */
-.btn-primary::before, .btn-secondary::before {
+/* Ripple Effect */
+.btn-primary::before,
+.btn-secondary::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -181,11 +157,13 @@
   transition: width 0.6s, height 0.6s;
 }
 
-.btn-primary:active::before, .btn-secondary:active::before {
+.btn-primary:active::before,
+.btn-secondary:active::before {
   width: 300px;
   height: 300px;
 }
 
+/* Image */
 .hero-image {
   flex: 1;
   display: flex;
@@ -205,97 +183,37 @@
   object-fit: cover;
 }
 
-/* Scroll Animation Classes */
-.scroll-hidden {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 0.8s ease-out;
-}
-
-.scroll-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* Animations */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes typing {
-  0%, 90%, 100% {
-    width: 0;
-  }
-  30%, 60% {
-    width: 100%;
-    max-width: max-content; /* Responsive fix */
-  }
+  0%, 90%, 100% { width: 0; }
+  30%, 60% { width: 100%; max-width: max-content; }
 }
 
 @keyframes blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
-/* Responsive Design */
+@keyframes redGlow {
+  0%, 100% { box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6); }
+  50% { box-shadow: 0 8px 35px rgba(139, 0, 0, 0.9); }
+}
+
+/* Responsive */
 @media (max-width: 1024px) {
   .hero-text h1 {
     font-size: clamp(1.6rem, 4vw + 1rem, 3rem);
   }
-  
   .hero-container {
     justify-content: center;
     align-items: center;
@@ -303,11 +221,6 @@
 }
 
 @media (max-width: 768px) {
-  .nav-links {
-    gap: 15px;
-    font-size: 0.9rem;
-  }
-  
   .hero-container {
     flex-direction: column-reverse;
     text-align: center;
@@ -315,73 +228,48 @@
     align-items: center;
     padding: 0 30px;
   }
-  
+
   .hero-text {
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  
+
   .hero-text h1 {
     font-size: clamp(1.4rem, 6vw + 0.5rem, 2.5rem);
   }
-  
-  /* h2 typing effect on mobile - CENTERED + RESPONSIVE STEPS */
+
   .hero-text h2 {
     font-size: clamp(1.4rem, 4vw + 1rem, 2.2rem);
-    animation: typing 4s steps(22) infinite; /* Increased steps for mobile */
+    animation: typing 4s steps(22) infinite;
     text-align: center !important;
     margin-left: auto;
     margin-right: auto;
   }
-  
-  /* MOBILE LIGHT THEME - Black text with red outline */
-  [data-theme="light"] .hero-text h2,
-  html.light .hero-text h2 {
-    background: transparent !important;
-    -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: #000000 !important;
-    background-clip: unset !important;
-    color: #000000 !important;
-    -webkit-text-stroke: 1.5px #fa0000 !important;
-   -webkit-text-stroke: 1.2px #fa0000 !important;
-    filter: drop-shadow(0 1px 2px rgba(250, 0, 0, 0.4)) !important;
-    paint-order: stroke fill !important;
-  }
-  
+
   .hero-text p {
     text-align: center;
   }
-  
+
   .hero-buttons {
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-  
-  .btn-primary, .btn-secondary {
+
+  .btn-primary,
+  .btn-secondary {
     width: 200px;
     box-sizing: border-box;
   }
-  
+
   .hero-image {
     padding-left: 0;
   }
-  
+
   .hero-image img {
-    width: 100%;
     max-width: 300px;
-  }
-  
-  .hero-title {
-    text-align: center;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .skills-grid {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -389,47 +277,30 @@
   .hero-text h1 {
     font-size: clamp(1.2rem, 7vw + 0.5rem, 2rem);
   }
-  
-  /* h2 typing effect on small mobile - CENTERED + OPTIMIZED */
+
   .hero-text h2 {
     font-size: clamp(1.2rem, 5vw + 1rem, 1.8rem);
-    animation: typing 3.5s steps(26) infinite; /* Optimized for small screens */
+    animation: typing 3.5s steps(26) infinite;
     text-align: center !important;
     margin-left: auto;
     margin-right: auto;
   }
-  
-  /* SMALL MOBILE LIGHT THEME - Thinner stroke */
-  [data-theme="light"] .hero-text h2,
-  html.light .hero-text h2 {
-    -webkit-text-stroke: 1.2px #fa0000 !important;
-   -webkit-text-stroke: 1.2px #fa0000 !important;
 
-  }
-  
   .hero-text p {
     text-align: center;
   }
-  
+
   .hero-container {
-    justify-content: center;
-    align-items: center;
     padding: 0 20px;
   }
-  
-  .hero-title {
-    text-align: center;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .btn-primary, .btn-secondary {
+
+  .btn-primary,
+  .btn-secondary {
     width: 200px;
-    box-sizing: border-box;
   }
 }
 
-/* Light Mode - Black text with red outline (DESKTOP) */
+/* Light Mode - Black text with red outline */
 [data-theme="light"] .hero-text h2,
 html.light .hero-text h2 {
   background: transparent;
@@ -437,8 +308,9 @@ html.light .hero-text h2 {
   -webkit-text-fill-color: #000000;
   background-clip: unset;
   color: #000000;
-  -webkit-text-stroke: 2px #fa0000;
- -webkit-text-stroke: 1.2px #fa0000 !important;
+
+  -webkit-text-stroke: 1.2px #fa0000 !important;
+
   filter: drop-shadow(0 2px 4px rgba(250, 0, 0, 0.3));
   paint-order: stroke fill;
 }
