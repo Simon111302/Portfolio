@@ -1,6 +1,14 @@
 import profileImage from '../assets/simon2.jpg';
 
 function Hero() {
+    // Calculate padding based on screen width
+  const getPaddingTop = () => {
+    if (window.innerWidth <= 480) return '70px';      // Small phones
+    if (window.innerWidth <= 768) return '75px';      // Mobile
+    if (window.innerWidth <= 1024) return '80px';     // Tablet
+    return '30px';                                     // Desktop
+  };
+  
   return (
     <section id="home" className="hero">
       <div className="hero-container">

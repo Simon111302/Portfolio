@@ -8,7 +8,7 @@ import {
   useSphericalJoint, 
   useRopeJoint 
 } from '@react-three/rapier';
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import profileImage from '../assets/simon2.jpg';
@@ -438,6 +438,27 @@ useFrame((state, delta) => {
 }
 
 function FloatingCard3D() {
+  // Add this state for responsive camera
+  const [cameraZ, setCameraZ] = useState(() => {
+    if (window.innerWidth <= 480) return 8;
+    if (window.innerWidth <= 768) return 8;
+    if (window.innerWidth <= 1024) return 10;
+    return 12;
+  });
+
+  // Add resize listener
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 480) setCameraZ(5);
+      else if (window.innerWidth <= 768) setCameraZ(7);
+      else if (window.innerWidth <= 1024) setCameraZ(10);
+      else setCameraZ(15);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
       <div className="scroll-zone-left"></div>
@@ -446,7 +467,7 @@ function FloatingCard3D() {
       <div className="floating-card-3d-container">
         <Canvas
           camera={{ 
-            position: [0, 0, 10], 
+            position: [0, 0, cameraZ],  // Use state variable instead
             fov: 45,
             near: 0.1,
             far: 10000
